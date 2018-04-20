@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "622436905463",
+    "firebase_url": "https://paspeechtrash.firebaseio.com",
+    "project_id": "paspeechtrash",
+    "storage_bucket": "paspeechtrash.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622436905463:android:b6503a778da5c0a9",
+        "android_client_info": {
+          "package_name": "com.d3iftelu.gooddayteam.speechtrash"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "622436905463-so36s4ta9blh9g16grcntg6d1agqa67j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.d3iftelu.gooddayteam.speechtrash",
+            "certificate_hash": "b3f4e315d54d9b473b4799a9aae084f8a8e3c879"
+          }
+        },
+        {
+          "client_id": "622436905463-p1ckuhqt7ku3tfa9mnc18kc9vv6ssprg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3r5q-Ze8NNbN7na9SK6EDGYAylWb26QU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "622436905463-p1ckuhqt7ku3tfa9mnc18kc9vv6ssprg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
