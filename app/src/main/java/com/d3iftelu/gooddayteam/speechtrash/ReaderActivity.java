@@ -11,7 +11,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -141,6 +144,16 @@ public class ReaderActivity extends AppCompatActivity implements ZXingScannerVie
 
         View viewDialog = inflater.inflate(R.layout.dialog, null);
         final EditText editTextName = viewDialog.findViewById(R.id.edit_text_name);
+
+        final View title = inflater.inflate(R.layout.text_view_customize,null);
+
+        final ImageView icon = (ImageView) title.findViewById(R.id.custom_icon_of_title);
+        final TextView text = (TextView) title.findViewById(R.id.custom_text_of_title);
+
+        icon.setImageResource(R.drawable.ic_add_black_24dp);
+        text.setText(R.string.title_add_device);
+        builder.setCustomTitle(title);
+
         builder.setView(viewDialog)
                 .setPositiveButton(R.string.dialog_submit, new DialogInterface.OnClickListener() {
                     @Override
@@ -154,8 +167,9 @@ public class ReaderActivity extends AppCompatActivity implements ZXingScannerVie
                         dialog.cancel();
                     }
                 });
-        builder.create();
-        builder.show();
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void saveToDatabase(String idDevice, String deviceName){

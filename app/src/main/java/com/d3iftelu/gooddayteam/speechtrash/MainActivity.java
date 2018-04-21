@@ -103,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
                                 myRef.child("device").child(deviceId).child("status").setValue(false);
                                 device.setStatus(false);
                             }
-                            mAdapter.notifyDataSetChanged();
                             loadingData.setVisibility(View.GONE);
+                            mAdapter.notifyDataSetChanged();
                         }
 
                         @Override
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
+                loadingData.setVisibility(View.GONE);
                 mAdapter.notifyDataSetChanged();
             }
 

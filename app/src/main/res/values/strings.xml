@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">SpeechTrash</string>
+    <string name="title_add_device">Add Device</string>
     <string name="empty_view_title_text">Data is Empty!!!</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_submit">Submit</string>
