@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">SpeechTrash</string>
+    <string name="empty_view_title_text">Data is Empty!!!</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_submit">Submit</string>
+    <string name="device_name">Device Name</string>
+    <string name="image_description_status_device">Show Device Status FULL or NOT</string>
+    <string name="text_logout">Logout</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
 </resources>
