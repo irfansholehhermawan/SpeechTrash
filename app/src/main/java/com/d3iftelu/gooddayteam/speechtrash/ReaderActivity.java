@@ -150,7 +150,7 @@ public class ReaderActivity extends AppCompatActivity implements ZXingScannerVie
         final ImageView icon = (ImageView) title.findViewById(R.id.custom_icon_of_title);
         final TextView text = (TextView) title.findViewById(R.id.custom_text_of_title);
 
-        icon.setImageResource(R.drawable.ic_add_black_24dp);
+        icon.setImageResource(R.drawable.ic_info_black_24dp);
         text.setText(R.string.title_add_device);
         builder.setCustomTitle(title);
 
@@ -176,6 +176,7 @@ public class ReaderActivity extends AppCompatActivity implements ZXingScannerVie
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert firebaseUser != null;
         FirebaseDatabase.getInstance().getReference("user").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
+        FirebaseDatabase.getInstance().getReference("device").child(idDevice).child("deviceName").setValue(deviceName);
         finish();
     }
 }

@@ -50,12 +50,11 @@ public class MainActivity extends AppCompatActivity {
         mTextViewDataIsEmpty = findViewById(R.id.text_view_empty_view);
         loadingData = (ProgressBar) findViewById(R.id.item_progres_bar);
 
-        mListViewDevice.setEmptyView(mTextViewDataIsEmpty);
-
         final ArrayList<Device> devices = readDeviceData();
 
         mAdapter = new DeviceListAdapter(this, devices);
         mListViewDevice.setAdapter(mAdapter);
+        mListViewDevice.setEmptyView(mTextViewDataIsEmpty);
 
         mListViewDevice.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

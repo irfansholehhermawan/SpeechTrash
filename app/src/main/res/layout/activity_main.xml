@@ -31,11 +31,13 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="@string/empty_view_title_text"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:visibility="gone"/>
 
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@id/text_view_empty_view"
         android:layout_centerInParent="true"
         android:id="@+id/item_progres_bar"/>
 
