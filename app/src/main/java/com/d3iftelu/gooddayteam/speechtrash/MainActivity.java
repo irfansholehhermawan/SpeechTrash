@@ -59,11 +59,11 @@ public class MainActivity extends AppCompatActivity {
         mListViewDevice.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-//                intent.putExtra(DetailActivity.ARGS_DEVICE_NAME, devices.get(i).getDeviceName());
-//                intent.putExtra(DetailActivity.ARGS_DEVICE_ID, devices.get(i).getDeviceId());
-//                startActivity(intent);
-                Toast.makeText(MainActivity.this, "Under Maintance!!!",Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra(DetailActivity.ARGS_DEVICE_NAME, devices.get(i).getDeviceName());
+                intent.putExtra(DetailActivity.ARGS_DEVICE_ID, devices.get(i).getDeviceId());
+                startActivity(intent);
+//                Toast.makeText(MainActivity.this, "Under Maintance!!!",Toast.LENGTH_LONG).show();
             }
         });
     }
