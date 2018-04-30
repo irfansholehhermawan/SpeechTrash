@@ -95,6 +95,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             } else {
                 // Google Sign In failed, update UI appropriately
                 // ...
+                loadingLogin.setVisibility(View.GONE);
                 Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show();
             }
         }
@@ -118,6 +119,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {
+                            loadingLogin.setVisibility(View.GONE);
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
