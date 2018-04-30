@@ -11,18 +11,21 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.Utils;
 
-/**
- * Created by Sholeh Hermawan on 23/04/2018.
- */
+public class MyMarkerChartView extends MarkerView {
+    /**
+     * Constructor. Sets up the MarkerView with a custom layout resource.
+     *
+     * @param context
+     * @param layoutResource the layout resource to use for the MarkerView
+     */
 
-public class MyMarkerView extends MarkerView {
+    private TextView tvContent;
 
-    private TextView content;
-
-    public MyMarkerView(Context context, int layoutResource) {
+    public MyMarkerChartView(Context context, int layoutResource) {
         super(context, layoutResource);
 
-        content = (TextView) findViewById(R.id.idContent);
+
+        tvContent = (TextView) findViewById(R.id.tvContent);
     }
 
     // callbacks everytime the MarkerView is redrawn, can be used to update the
@@ -34,10 +37,10 @@ public class MyMarkerView extends MarkerView {
 
             CandleEntry ce = (CandleEntry) e;
 
-            content.setText("" + Utils.formatNumber(ce.getHigh(), 0, true));
+            tvContent.setText("" + Utils.formatNumber(ce.getHigh(), 0, true));
         } else {
 
-            content.setText("" + Utils.formatNumber(e.getY(), 0, true));
+            tvContent.setText("" + Utils.formatNumber(e.getY(), 0, true));
         }
 
         super.refreshContent(e, highlight);
@@ -47,4 +50,5 @@ public class MyMarkerView extends MarkerView {
     public MPPointF getOffset() {
         return new MPPointF(-(getWidth() / 2), -getHeight());
     }
+
 }

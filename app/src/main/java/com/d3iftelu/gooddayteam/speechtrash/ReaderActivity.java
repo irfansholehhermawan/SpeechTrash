@@ -1,6 +1,7 @@
 package com.d3iftelu.gooddayteam.speechtrash;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,7 +12,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -134,49 +134,13 @@ public class ReaderActivity extends AppCompatActivity implements ZXingScannerVie
     @Override
     public void handleResult(Result result) {
         final String idDevice = result.getText();
-        showDialogInputName(idDevice);
+        goToPlaceActivity(idDevice);
     }
 
-    private void showDialogInputName(final String idDevice){
-        AlertDialog.Builder builder = new AlertDialog.Builder(ReaderActivity.this);
-        // Get the layout inflater
-        LayoutInflater inflater = getLayoutInflater();
-
-        View viewDialog = inflater.inflate(R.layout.dialog, null);
-        final EditText editTextName = viewDialog.findViewById(R.id.edit_text_name);
-
-        final View title = inflater.inflate(R.layout.text_view_customize,null);
-
-        final ImageView icon = (ImageView) title.findViewById(R.id.custom_icon_of_title);
-        final TextView text = (TextView) title.findViewById(R.id.custom_text_of_title);
-
-        icon.setImageResource(R.drawable.ic_info_black_24dp);
-        text.setText(R.string.title_add_device);
-        builder.setCustomTitle(title);
-
-        builder.setView(viewDialog)
-                .setPositiveButton(R.string.dialog_submit, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        String deviceName = editTextName.getText().toString().trim();
-                        saveToDatabase(idDevice, deviceName);
-                    }
-                })
-                .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        final AlertDialog dialog = builder.create();
-        dialog.show();
+    private void goToPlaceActivity(String idDevice) {
+        Intent intent = new Intent(ReaderActivity.this, PlaceActivity.class);
+        intent.putExtra("idDevice", idDevice);
+        startActivity(intent);
     }
 
-    private void saveToDatabase(String idDevice, String deviceName){
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        assert firebaseUser != null;
-        FirebaseDatabase.getInstance().getReference("user").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
-        FirebaseDatabase.getInstance().getReference("device").child(idDevice).child("deviceName").setValue(deviceName);
-        finish();
-    }
 }

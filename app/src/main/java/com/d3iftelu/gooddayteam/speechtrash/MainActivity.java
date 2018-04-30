@@ -95,12 +95,20 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             try {
-                                boolean status =
-                                        dataSnapshot.child("status").getValue(boolean.class);
+                                boolean status = dataSnapshot.child("status").getValue(boolean.class);
                                 device.setStatus(status);
+
                             } catch (NullPointerException e){
                                 myRef.child("device").child(deviceId).child("status").setValue(false);
                                 device.setStatus(false);
+
+                                int x = 0;
+                                ProcessingHelper processingHelper = new ProcessingHelper();
+                                long time = processingHelper.getDateNow();
+                                myRef.child("device").child(deviceId).child("monitoring").child("volume").setValue(x);
+                                myRef.child("device").child(deviceId).child("monitoring").child("berat").setValue(x);
+                                myRef.child("device").child(deviceId).child("monitoring").child("time").setValue(String.valueOf(time));
+                                myRef.child("device").child(deviceId).child("history").child("startDate").setValue(time);
                             }
                             loadingData.setVisibility(View.GONE);
                             mAdapter.notifyDataSetChanged();
