@@ -22,13 +22,6 @@ public class User {
         this.token = token;
     }
 
-    public User(String name, String photoUrl, double latitude, double longitude) {
-        this.name = name;
-        this.photoUrl = photoUrl;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
     public String getName() {
         return name;
     }
