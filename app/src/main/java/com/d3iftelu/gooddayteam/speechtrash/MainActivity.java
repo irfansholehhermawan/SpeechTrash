@@ -14,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.d3iftelu.gooddayteam.speechtrash.adapter.DeviceListAdapter;
 import com.d3iftelu.gooddayteam.speechtrash.model.Device;
@@ -137,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.logout, menu);
+        inflater.inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -145,6 +144,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //to add option menu
         switch (item.getItemId()) {
+            case R.id.list_maps:
+                Intent maps = new Intent(MainActivity.this, MapsActivity.class);
+                startActivity(maps);
+                return true;
             case R.id.logout:
                 signOutCheck();
                 return true;
@@ -155,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void signOutCheck(){
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setMessage("Do you want to logout ?")
+        builder.setMessage("Do you want to Logout ?")
                 .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
