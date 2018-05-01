@@ -9,11 +9,6 @@ import android.graphics.Path;
 
 import com.squareup.picasso.Transformation;
 
-
-/**
- * Created by Hari Nugroho on 18/09/2017.
- */
-
 public class BubbleTransformation implements Transformation {
     private static final int outerMargin = 30;
     private final int margin;

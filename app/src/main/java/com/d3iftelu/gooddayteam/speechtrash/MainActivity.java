@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         final DatabaseReference myRef = database.getReference();
         myRef.keepSynced(true);
-        myRef.child("user").child(mCurrentUser.getUid()).addValueEventListener(new ValueEventListener() {
+        myRef.child("list_device").child(mCurrentUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 devicesData.clear();

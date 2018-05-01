@@ -228,8 +228,8 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
     private void saveToDatabase(String idDevice, String deviceName){
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert firebaseUser != null;
-        FirebaseDatabase.getInstance().getReference("user_profile").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
-        FirebaseDatabase.getInstance().getReference("user").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
+        FirebaseDatabase.getInstance().getReference("list_device").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
+//        FirebaseDatabase.getInstance().getReference("user_profile").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
 //        FirebaseDatabase.getInstance().getReference("device").child(idDevice).child("deviceName").setValue(deviceName);
         finish();
     }
