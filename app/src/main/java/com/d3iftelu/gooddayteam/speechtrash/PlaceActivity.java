@@ -161,13 +161,13 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
         Picasso.with(PlaceActivity.this).load(marker.getImageUrl())
                 .resize(210, 210)
                 .centerCrop()
-                .transform(new BubbleTransformation(10))
+                .transform(new BubbleTransformation(20))
                 .into(mTarget);
 
         if (isMyPosition) {
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(position)          // Sets the center of the map to Mountain View
-                    .zoom(15)                    // Sets the zoom
+                    .zoom(17)                    // Sets the zoom
                     .build();                    // Creates a CameraPosition from the builder
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
@@ -232,10 +232,12 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
     }
 
     private void saveToDatabase(String idDevice, String deviceName){
+        String icon = "https://firebasestorage.googleapis.com/v0/b/paspeechtrash.appspot.com/o/icon%2Ficon.png?alt=media&token=f8b2cb61-7a74-4b10-94fe-55d0465816db";
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert firebaseUser != null;
         databaseReference.child("list_device").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
-        databaseReference.child("list_device").child(idDevice).child("name").setValue(deviceName);
+        databaseReference.child("list_maps").child(idDevice).child("name").setValue(deviceName);
+        databaseReference.child("list_maps").child(idDevice).child("imageUrl").setValue(icon);
 //        FirebaseDatabase.getInstance().getReference("user_profile").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
 //        FirebaseDatabase.getInstance().getReference("device").child(idDevice).child("deviceName").setValue(deviceName);
         finish();
@@ -243,7 +245,7 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
 
     private void saveListDevice(LatLng myPosition) {
         MarkerData marker = new MarkerData(String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, curentUser.getDisplayName());
-        databaseReference.child("list_device").child(idDevice).setValue(marker);
+        databaseReference.child("list_maps").child(idDevice).setValue(marker);
     }
 
     private void goToMainActivity() {

@@ -135,15 +135,15 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
         };
 
         Picasso.with(MapsActivity.this).load(marker.getImageUrl())
-                .resize(210, 210)
+                .resize(120, 120)
                 .centerCrop()
-                .transform(new BubbleTransformation(10))
+                .transform(new BubbleTransformation(0))
                 .into(mTarget);
 
         if (isMyPosition) {
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(position)          // Sets the center of the map to Mountain View
-                    .zoom(15)                    // Sets the zoom
+                    .zoom(14)                    // Sets the zoom
                     .build();                    // Creates a CameraPosition from the builder
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
@@ -172,7 +172,7 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
 
     private void readListDevice() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("list_device");
+        DatabaseReference myRef = database.getReference("list_maps");
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override

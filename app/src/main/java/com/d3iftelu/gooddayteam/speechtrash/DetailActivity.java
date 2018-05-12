@@ -1,5 +1,6 @@
 package com.d3iftelu.gooddayteam.speechtrash;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -38,6 +39,10 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        Intent intent = getIntent();
+//        String mDeviceName = intent.getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
+        String mDeviceId = intent.getStringExtra(DetailActivity.ARGS_DEVICE_ID);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -49,6 +54,8 @@ public class DetailActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         setUpLandingFragment();
+
+        setTitle(mDeviceId);
     }
 
     /**

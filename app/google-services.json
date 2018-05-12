@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "622436905463-om0ibar0p4bnjt4dspogqhunktkee8lc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.d3iftelu.gooddayteam.speechtrash",
+            "certificate_hash": "09f10edd3223e5eeffb9183a3b2710acaba3c4a6"
+          }
+        },
+        {
           "client_id": "622436905463-so36s4ta9blh9g16grcntg6d1agqa67j.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

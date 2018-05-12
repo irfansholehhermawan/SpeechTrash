@@ -213,7 +213,7 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
 
         final DatabaseReference myRef = database.getReference();
         myRef.keepSynced(true);
-        myRef.child("device").child(mDeviceId).child("value").addValueEventListener(new ValueEventListener() {
+        myRef.child("device").child(mDeviceId).child("realtime").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mValuesVolume.clear();
@@ -243,7 +243,7 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         final DatabaseReference myRef = database.getReference();
         myRef.keepSynced(true);
 
-        myRef.child("device").child(mDeviceId).child("value").addValueEventListener(new ValueEventListener() {
+        myRef.child("device").child(mDeviceId).child("realtime").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mValuesBerat.clear();
