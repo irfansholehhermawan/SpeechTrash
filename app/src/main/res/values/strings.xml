@@ -16,4 +16,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- FCM Related Strings -->
+    <string name="default_notification_channel_id" translatable="false">com.d3iftelu.gooddayteam.speechtrash.default_notification_channel_id</string>
+    <string name="data_type">data_type</string>
+    <string name="direct_message">direct_message</string>
+    <string name="data_message">message</string>
+    <string name="data_title">title</string>
+    <string name="data_message_id">message_id</string>
 </resources>

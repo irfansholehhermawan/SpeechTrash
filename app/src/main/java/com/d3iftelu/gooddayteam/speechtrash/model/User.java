@@ -5,6 +5,7 @@ package com.d3iftelu.gooddayteam.speechtrash.model;
  */
 
 public class User {
+    private String user_id;
     private String name;
     private String photoUrl;
     private double latitude;
@@ -14,12 +15,17 @@ public class User {
     public User() {
     }
 
-    public User(String name, String photoUrl, double latitude, double longitude, String token) {
+    public User(String user_id, String name, String photoUrl, double latitude, double longitude, String token) {
+        this.user_id = user_id;
         this.name = name;
         this.photoUrl = photoUrl;
         this.latitude = latitude;
         this.longitude = longitude;
         this.token = token;
+    }
+
+    public String getUser_id() {
+        return user_id;
     }
 
     public String getName() {
