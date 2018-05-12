@@ -194,7 +194,7 @@ public class GPSTracker extends Service implements LocationListener {
     public void writeLatLngToDatabase(LatLng myPosition){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         PrefManager prefManager = new PrefManager(mContext);
-        User user = new User(curentUser.getDisplayName(), String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, prefManager.getToken());
+        User user = new User(curentUser.getUid(), curentUser.getDisplayName(), String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, prefManager.getToken());
         databaseReference.child("user_profile").child(curentUser.getUid()).setValue(user);
     }
 
