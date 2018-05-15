@@ -35,7 +35,7 @@
         <activity android:name=".ReaderActivity" />
         <activity android:name=".DetailActivity" />
         <activity android:name=".PlaceActivity" />
-        <activity android:name=".MapsActivity" />
+        <activity android:name=".MapsFragment" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

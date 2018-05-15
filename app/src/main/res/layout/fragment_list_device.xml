@@ -16,9 +16,7 @@
         android:layout_margin="20dp"
         app:backgroundTint="@color/colorPrimaryDark"
         android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:onClick="goToReader"
-        tools:ignore="OnClick" />
+        android:layout_alignParentBottom="true"/>
 
     <ListView
         android:id="@+id/list_view_device"

@@ -39,14 +39,14 @@ public class AdminActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
+                case R.id.navigation_maps:
+                    changeFragment(new MapsFragment());
+                    return true;
                 case R.id.navigation_list_device:
                     changeFragment(new ListDeviceFragment());
                     return true;
-                case R.id.navigation_maps:
-                    changeFragment(new ListDeviceFragment());
-                    return true;
                 case R.id.navigation_list_petugas:
-                    changeFragment(new ListDeviceFragment());
+                    changeFragment(new ListPetugasFragment());
                     return true;
             }
             return false;
@@ -61,7 +61,7 @@ public class AdminActivity extends AppCompatActivity {
     private void setUpLandingFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.popBackStack();
-        fragmentManager.beginTransaction().add(R.id.content, new ListDeviceFragment()).commit();
+        fragmentManager.beginTransaction().add(R.id.content, new MapsFragment()).commit();
     }
 
     @Override
@@ -75,10 +75,6 @@ public class AdminActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //to add option menu
         switch (item.getItemId()) {
-            case R.id.list_maps:
-                Intent maps = new Intent(AdminActivity.this, MapsActivity.class);
-                startActivity(maps);
-                return true;
             case R.id.logout:
                 signOutCheck();
                 return true;

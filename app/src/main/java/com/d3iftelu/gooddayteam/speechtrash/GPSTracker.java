@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.d3iftelu.gooddayteam.speechtrash.model.MarkerData;
 import com.d3iftelu.gooddayteam.speechtrash.model.User;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
@@ -194,8 +195,19 @@ public class GPSTracker extends Service implements LocationListener {
     public void writeLatLngToDatabase(LatLng myPosition){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         PrefManager prefManager = new PrefManager(mContext);
-        User user = new User(curentUser.getUid(), curentUser.getDisplayName(), String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, prefManager.getToken());
-        databaseReference.child("user_profile").child(curentUser.getUid()).setValue(user);
+        String email = curentUser.getEmail();
+        if (email.contains("@admin")){
+            String name = curentUser.getEmail();
+            String url = "https://firebasestorage.googleapis.com/v0/b/paspeechtrash.appspot.com/o/icon%2Fadmin.png?alt=media&token=c0be8582-2a21-4425-ac28-88809f866379";
+            User user = new User(curentUser.getUid(), name , url, myPosition.latitude, myPosition.longitude, prefManager.getToken());
+            databaseReference.child("admin").child(curentUser.getUid()).setValue(user);
+        } else {
+            User user = new User(curentUser.getUid(), curentUser.getDisplayName() , String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, prefManager.getToken());
+            databaseReference.child("list_petugas").child(curentUser.getUid()).setValue(user);
+            MarkerData marker = new MarkerData(String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, curentUser.getDisplayName());
+            databaseReference.child("list_maps").child(curentUser.getUid()).setValue(marker);
+        }
+
     }
 
     public String getLocationName(double latitude, double longitude){

@@ -72,6 +72,7 @@ public class LoginActivity extends AppCompatActivity implements
 
             @Override
             public void onClick(View v) {
+                progressBarLogin.setVisibility(View.VISIBLE);
                 Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             }
@@ -149,7 +150,7 @@ public class LoginActivity extends AppCompatActivity implements
             if(emailAddress.equals("")){
                 inputLayoutEmailAddress.setError("Email address can't empty!");
             }
-            else if(!emailAddress.contains("@")){
+            else if(!emailAddress.contains("@") || !emailAddress.contains("@admin.com")){
                 inputLayoutEmailAddress.setError("Not a valid email address! (@admin.com)");
             }
             return false;
@@ -197,6 +198,7 @@ public class LoginActivity extends AppCompatActivity implements
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        progressBarLogin.setVisibility(View.GONE);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
@@ -230,6 +232,7 @@ public class LoginActivity extends AppCompatActivity implements
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {
+                            progressBarLogin.setVisibility(View.GONE);
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",

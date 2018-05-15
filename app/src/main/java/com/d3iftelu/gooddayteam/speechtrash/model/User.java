@@ -11,6 +11,7 @@ public class User {
     private double latitude;
     private double longitude;
     private String token;
+    private String idUSer;
 
     public User() {
     }
@@ -22,6 +23,20 @@ public class User {
         this.latitude = latitude;
         this.longitude = longitude;
         this.token = token;
+    }
+
+    public User(User user, String idUser) {
+        this.user_id = user.getUser_id();
+        this.name = user.getName();
+        this.photoUrl = user.getPhotoUrl();
+        this.latitude = user.getLatitude();
+        this.longitude = user.getLongitude();
+        this.token = user.getToken();
+        this.idUSer = idUser;
+    }
+
+    public String getIdUSer() {
+        return idUSer;
     }
 
     public String getUser_id() {

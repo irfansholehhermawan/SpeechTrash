@@ -1,6 +1,7 @@
 package com.d3iftelu.gooddayteam.speechtrash;
 
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,9 +32,13 @@ public class ListDeviceFragment extends Fragment {
     private ListView mListViewDevice;
     private TextView mTextViewDataIsEmpty;
     private ProgressBar loadingData;
-
+    private FloatingActionButton goToReader;
     private FirebaseUser mCurrentUser;
     private DeviceListAdapter mAdapter;
+
+    public ListDeviceFragment(){
+        // Required empty public constructor
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,6 +50,7 @@ public class ListDeviceFragment extends Fragment {
         mListViewDevice = rootView.findViewById(R.id.list_view_device);
         mTextViewDataIsEmpty = rootView.findViewById(R.id.text_view_empty_view);
         loadingData = (ProgressBar) rootView.findViewById(R.id.item_progres_bar);
+        goToReader = (FloatingActionButton) rootView.findViewById(R.id.add_device);
 
         final ArrayList<Device> devices = readDeviceData();
 
@@ -62,12 +68,15 @@ public class ListDeviceFragment extends Fragment {
 //                Toast.makeText(ListDeviceFragment.this, "Under Maintance!!!",Toast.LENGTH_LONG).show();
             }
         });
-        return rootView;
-    }
 
-    public void goToReader(View view) {
-        Intent intent = new Intent(getContext(), ReaderActivity.class);
-        startActivity(intent);
+        goToReader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), ReaderActivity.class);
+                startActivity(intent);
+            }
+        });
+        return rootView;
     }
 
     private ArrayList<Device> readDeviceData() {

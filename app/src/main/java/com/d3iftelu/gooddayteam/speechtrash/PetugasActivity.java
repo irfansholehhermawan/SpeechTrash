@@ -2,6 +2,10 @@ package com.d3iftelu.gooddayteam.speechtrash;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +25,41 @@ public class PetugasActivity extends AppCompatActivity {
         setContentView(R.layout.activity_petugas);
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
-        checkUser(mCurrentUser);
+        checkUser(mCurrentUser);BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        setUpLandingFragment();
+    }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_maps:
+                    changeFragment(new MapsFragment());
+                    return true;
+                case R.id.navigation_chat:
+                    changeFragment(new ChatFragment());
+                    return true;
+                case R.id.navigation_device:
+                    changeFragment(new DevicePetugasFragment());
+                    return true;
+            }
+            return false;
+        }
+    };
+
+    private void changeFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content, fragment).commit();
+    }
+
+    private void setUpLandingFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.popBackStack();
+        fragmentManager.beginTransaction().add(R.id.content, new MapsFragment()).commit();
     }
 
     @Override
@@ -35,10 +73,6 @@ public class PetugasActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //to add option menu
         switch (item.getItemId()) {
-            case R.id.list_maps:
-                Intent maps = new Intent(PetugasActivity.this, MapsActivity.class);
-                startActivity(maps);
-                return true;
             case R.id.logout:
                 signOutCheck();
                 return true;

@@ -160,7 +160,7 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
         if (isMyPosition) {
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(position)          // Sets the center of the map to Mountain View
-                    .zoom(17)                    // Sets the zoom
+                    .zoom(18)                    // Sets the zoom
                     .build();                    // Creates a CameraPosition from the builder
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
@@ -177,8 +177,17 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
     }
 
     private void setCurentUserMarker(boolean isFirstTime) {
+        String name, url;
+        String email = curentUser.getEmail();
+        if (email.contains("@admin")){
+            name = curentUser.getEmail();
+            url = "https://firebasestorage.googleapis.com/v0/b/paspeechtrash.appspot.com/o/icon%2Fadmin.png?alt=media&token=e26d0f9c-10bc-4a33-913b-4761447e919a";
+        } else {
+            name = curentUser.getDisplayName();
+            url = String.valueOf(curentUser.getPhotoUrl());
+        }
         Marker marker;
-        MarkerData markerData = new MarkerData(String.valueOf(curentUser.getPhotoUrl()), gps.getLatitude(), gps.getLongitude(), curentUser.getDisplayName());
+        MarkerData markerData = new MarkerData(url, gps.getLatitude(), gps.getLongitude(), name);
         if (isFirstTime) {
             marker = setViewInMap(markerData, true);
         } else {
@@ -225,14 +234,12 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
     }
 
     private void saveToDatabase(String idDevice, String deviceName){
-        String icon = "https://firebasestorage.googleapis.com/v0/b/paspeechtrash.appspot.com/o/icon%2Ficon.png?alt=media&token=f8b2cb61-7a74-4b10-94fe-55d0465816db";
+        String icon = "https://firebasestorage.googleapis.com/v0/b/paspeechtrash.appspot.com/o/icon%2Ficon.png?alt=media&token=31a55eac-e52b-4d71-9557-409035ead899";
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert firebaseUser != null;
         databaseReference.child("list_device").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
         databaseReference.child("list_maps").child(idDevice).child("name").setValue(deviceName);
         databaseReference.child("list_maps").child(idDevice).child("imageUrl").setValue(icon);
-//        FirebaseDatabase.getInstance().getReference("user_profile").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
-//        FirebaseDatabase.getInstance().getReference("device").child(idDevice).child("deviceName").setValue(deviceName);
         finish();
     }
 
@@ -242,7 +249,7 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
     }
 
     private void goToMainActivity() {
-        Intent intent = new Intent(PlaceActivity.this, ListDeviceFragment.class);
+        Intent intent = new Intent(PlaceActivity.this, AdminActivity.class);
         startActivity(intent);
     }
 }

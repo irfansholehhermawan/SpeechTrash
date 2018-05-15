@@ -1,20 +1,20 @@
 package com.d3iftelu.gooddayteam.speechtrash;
 
-import android.app.Activity;
+
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.d3iftelu.gooddayteam.speechtrash.model.MarkerData;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,27 +38,38 @@ import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends Activity implements OnMapReadyCallback {
 
-    private static final String TAG = "MapsActivity";
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class MapsFragment extends Fragment implements OnMapReadyCallback {
+
+    private View view;
+    private static final String TAG = "MapsFragment";
     private GoogleMap mMap;
     private GPSTracker gps;
     private static final int LOCATION_PERMISSION_ID = 1001;
     private ProgressDialog progressDialog;
-    private MapView mapView;
-
     private FirebaseUser curentUser;
-    private DatabaseReference databaseReference;
     private ArrayList<Marker> markers;
 
+    public MapsFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_maps, container, false);
 
-        setProgressDialog();
-
-        mapView = (MapView) findViewById(R.id.main_maps);
+        MapView mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
         mapView.getMapAsync(this);
@@ -66,37 +77,27 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
 
         markers = new ArrayList<>();
 
-        if (ContextCompat.checkSelfPermission(MapsActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MapsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_ID);
+        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_ID);
         }
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         curentUser = firebaseAuth.getCurrentUser();
-        databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        readListDevice();
+        readDataInLocation();
+
+        return view;
+
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private LatLng getPosition() {
-        gps = new GPSTracker(this);
-        LatLng myPosition = new LatLng(gps.getLatitude(), gps.getLongitude());
-        return  myPosition;
-    }
-
-    private void setProgressDialog() {
-        progressDialog = new ProgressDialog(MapsActivity.this);
-        progressDialog.setCancelable(true);
-        progressDialog.setMessage("Pleace Wait");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setCancelable(false);
-        progressDialog.setCanceledOnTouchOutside(false);
-    }
-
+    /**
+     *
+     * @param googleMap
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        gps = new GPSTracker(MapsActivity.this);
+        gps = new GPSTracker(getContext());
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -123,34 +124,50 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
                 );
             }
 
+            /**
+             *
+             * @param errorDrawable
+             */
             @Override
             public void onBitmapFailed(Drawable errorDrawable) {
                 Log.d("picasso", "onBitmapFailed");
             }
 
+            /**
+             *
+             * @param placeHolderDrawable
+             */
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable) {
 
             }
         };
 
-        Picasso.with(MapsActivity.this).load(marker.getImageUrl())
-                .resize(120, 120)
+        Picasso.with(getActivity()).load(marker.getImageUrl())
+                .resize(170, 170)
                 .centerCrop()
                 .transform(new BubbleTransformation(0))
                 .into(mTarget);
 
         if (isMyPosition) {
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(position)          // Sets the center of the map to Mountain View
-                    .zoom(14)                    // Sets the zoom
-                    .build();                    // Creates a CameraPosition from the builder
+                    // Sets the center of the map to Mountain View
+                    .target(position)
+                    // Sets the zoom
+                    .zoom(15)
+                    // Creates a CameraPosition from the builder
+                    .build();
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
         return driver_marker[0];
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    /**
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == LOCATION_PERMISSION_ID && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -158,9 +175,22 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
         }
     }
 
+    /**
+     * set user marker
+     * @param isFirstTime detect is first time loading
+     */
     private void setCurentUserMarker(boolean isFirstTime) {
+        String name, url;
+        String email = curentUser.getEmail();
+        if (email.contains("@admin")){
+            name = curentUser.getEmail();
+            url = "https://firebasestorage.googleapis.com/v0/b/paspeechtrash.appspot.com/o/icon%2Fadmin.png?alt=media&token=e26d0f9c-10bc-4a33-913b-4761447e919a";
+        } else {
+            name = curentUser.getDisplayName();
+            url = String.valueOf(curentUser.getPhotoUrl());
+        }
         Marker marker;
-        MarkerData markerData = new MarkerData(String.valueOf(curentUser.getPhotoUrl()), gps.getLatitude(), gps.getLongitude(), curentUser.getDisplayName());
+        MarkerData markerData = new MarkerData(url, gps.getLatitude(), gps.getLongitude(), name);
         if (isFirstTime) {
             marker = setViewInMap(markerData, true);
         } else {
@@ -169,27 +199,36 @@ public class MapsActivity extends Activity implements OnMapReadyCallback {
         markers.add(marker);
     }
 
-
-    private void readListDevice() {
+    /**
+     * reading online user location
+     */
+    private void readDataInLocation() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("list_maps");
 
         myRef.addValueEventListener(new ValueEventListener() {
+            /**
+             *
+             * @param dataSnapshot
+             */
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mMap.clear();
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     MarkerData markerData = userSnapshot.getValue(MarkerData.class);
                     setViewInMap(markerData, false);
-                    Log.i(TAG, "ListMaps : " + markerData.getName());
                 }
+                setCurentUserMarker(false);
             }
 
+            /**
+             *
+             * @param databaseError
+             */
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // ...
             }
         });
     }
