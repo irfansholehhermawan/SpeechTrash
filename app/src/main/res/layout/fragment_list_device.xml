@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.d3iftelu.gooddayteam.speechtrash.MainActivity">
+    tools:context="com.d3iftelu.gooddayteam.speechtrash.ListDeviceFragment">
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_device"

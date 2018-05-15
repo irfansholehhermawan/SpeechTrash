@@ -21,18 +21,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+        <activity
+            android:name=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name=".AdminActivity"></activity>
+        <activity android:name=".PetugasActivity"></activity>
         <activity android:name=".ReaderActivity" />
         <activity android:name=".DetailActivity" />
         <activity android:name=".PlaceActivity" />
-        <activity android:name=".MapsActivity"/>
+        <activity android:name=".MapsActivity" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -48,11 +51,10 @@
 
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <service android:name=".FirebaseInstance">
+        <service android:name=".MyFirebaseInstanceService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>

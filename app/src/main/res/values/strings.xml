@@ -24,4 +24,7 @@
     <string name="data_message">message</string>
     <string name="data_title">title</string>
     <string name="data_message_id">message_id</string>
+
+    <!--SIGIN Email & Google-->
+    <string name="auth_failed">Email or Password is wrong!! Pleace Check Again</string>
 </resources>
