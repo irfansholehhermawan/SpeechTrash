@@ -30,11 +30,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AdminActivity"></activity>
-        <activity android:name=".PetugasActivity"></activity>
+        <activity android:name=".AdminActivity" />
+        <activity android:name=".PetugasActivity" />
         <activity android:name=".ReaderActivity" />
         <activity android:name=".DetailActivity" />
         <activity android:name=".PlaceActivity" />
+        <activity android:name=".ListPetugasActivity" />
+        <activity android:name=".FinishActivity" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -58,6 +60,8 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
+        <activity android:name=".DetailListDeviceActivity"></activity>
     </application>
 
 </manifest>

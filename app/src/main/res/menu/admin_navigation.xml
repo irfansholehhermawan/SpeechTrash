@@ -8,7 +8,7 @@
     <item
         android:id="@+id/navigation_list_device"
         android:icon="@drawable/ic_view_list_black_24dp"
-        android:title="Device" />
+        android:title="List Device" />
 
     <item
         android:id="@+id/navigation_list_petugas"
