@@ -81,7 +81,7 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
 
         FloatingActionButton floatingActionButtonGoToStopwatch = (FloatingActionButton) findViewById(R.id.my_location);
         floatingActionButtonGoToStopwatch.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
                 showDialogInputName(idDevice);
@@ -94,7 +94,7 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
         databaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private LatLng getPosition() {
         gps = new GPSTracker(this);
         LatLng myPosition = new LatLng(gps.getLatitude(), gps.getLongitude());
@@ -167,7 +167,7 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
         return driver_marker[0];
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == LOCATION_PERMISSION_ID && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -234,12 +234,17 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
     }
 
     private void saveToDatabase(String idDevice, String deviceName){
+        ProcessingHelper processingHelper = new ProcessingHelper();
+        long time = processingHelper.getDateNow();
         String icon = "https://firebasestorage.googleapis.com/v0/b/paspeechtrash.appspot.com/o/icon%2Ficon.png?alt=media&token=31a55eac-e52b-4d71-9557-409035ead899";
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert firebaseUser != null;
+        String mKey = databaseReference.child("device").child(idDevice).child("history").child("full").push().getKey();
         databaseReference.child("list_device").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
         databaseReference.child("list_maps").child(idDevice).child("name").setValue(deviceName);
         databaseReference.child("list_maps").child(idDevice).child("imageUrl").setValue(icon);
+        databaseReference.child("device").child(idDevice).child("history").child("full").child("lastKey").setValue(mKey);
+        databaseReference.child("device").child(idDevice).child("history").child("full").child(mKey).child("startDate").setValue(time);
         finish();
     }
 

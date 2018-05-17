@@ -114,7 +114,6 @@ public class ListDeviceFragment extends Fragment {
                                 myRef.child("device").child(deviceId).child("monitoring").child("volume").setValue(x);
                                 myRef.child("device").child(deviceId).child("monitoring").child("berat").setValue(x);
                                 myRef.child("device").child(deviceId).child("monitoring").child("time").setValue(String.valueOf(time));
-                                myRef.child("device").child(deviceId).child("history").child("startDate").setValue(time);
                             }
                             loadingData.setVisibility(View.GONE);
                             mAdapter.notifyDataSetChanged();

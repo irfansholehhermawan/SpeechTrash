@@ -46,7 +46,6 @@ public class LoginActivity extends AppCompatActivity implements
     private Button btnLoginWithEmail;
     private String email;
     private ProgressBar progressBarLogin;
-    static boolean calledAlready = false;
 
 
     @Override
@@ -85,11 +84,6 @@ public class LoginActivity extends AppCompatActivity implements
         progressBarLogin =(ProgressBar) findViewById(R.id.check_login);
         inputLayoutEmailAddress = (TextInputLayout) findViewById(R.id.input_layout_email);
         inputLayoutPassword = (TextInputLayout) findViewById(R.id.input_layout_password);
-
-        if(!calledAlready){
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-            calledAlready = true;
-        }
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {

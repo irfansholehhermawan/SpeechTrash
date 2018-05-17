@@ -30,7 +30,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
      */
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
@@ -64,7 +64,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 	 * @param title
 	 * @param message
 	 */
-	@RequiresApi(api = Build.VERSION_CODES.M)
+	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 	private void sendMessageNotification(String title, String message, String messageId){
 		Log.d(TAG, "sendChatmessageNotification: building a chatmessage notification");
 
