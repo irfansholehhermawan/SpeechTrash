@@ -79,13 +79,23 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
             ActivityCompat.requestPermissions(PlaceActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_ID);
         }
 
-        FloatingActionButton floatingActionButtonGoToStopwatch = (FloatingActionButton) findViewById(R.id.my_location);
-        floatingActionButtonGoToStopwatch.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton submitLocation = (FloatingActionButton) findViewById(R.id.submit_location);
+        submitLocation.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
                 showDialogInputName(idDevice);
                 saveListDevice(getPosition());
+            }
+        });
+
+        FloatingActionButton myLocation = (FloatingActionButton) findViewById(R.id.my_location);
+        myLocation.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onClick(View view) {
+                finish();
+                startActivity(getIntent());
             }
         });
 
