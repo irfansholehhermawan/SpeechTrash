@@ -1,7 +1,5 @@
 package com.d3iftelu.gooddayteam.speechtrash;
 
-import android.*;
-import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -21,11 +19,9 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.d3iftelu.gooddayteam.speechtrash.model.MarkerData;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,11 +35,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -86,13 +79,23 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
             ActivityCompat.requestPermissions(PlaceActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_ID);
         }
 
-        FloatingActionButton floatingActionButtonGoToStopwatch = (FloatingActionButton) findViewById(R.id.my_location);
-        floatingActionButtonGoToStopwatch.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
+        FloatingActionButton submitLocation = (FloatingActionButton) findViewById(R.id.submit_location);
+        submitLocation.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
                 showDialogInputName(idDevice);
                 saveListDevice(getPosition());
+            }
+        });
+
+        FloatingActionButton myLocation = (FloatingActionButton) findViewById(R.id.my_location);
+        myLocation.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onClick(View view) {
+                finish();
+                startActivity(getIntent());
             }
         });
 
@@ -101,7 +104,7 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
         databaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private LatLng getPosition() {
         gps = new GPSTracker(this);
         LatLng myPosition = new LatLng(gps.getLatitude(), gps.getLongitude());
@@ -167,14 +170,14 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
         if (isMyPosition) {
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(position)          // Sets the center of the map to Mountain View
-                    .zoom(17)                    // Sets the zoom
+                    .zoom(18)                    // Sets the zoom
                     .build();                    // Creates a CameraPosition from the builder
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
         return driver_marker[0];
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == LOCATION_PERMISSION_ID && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -184,8 +187,17 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
     }
 
     private void setCurentUserMarker(boolean isFirstTime) {
+        String name, url;
+        String email = curentUser.getEmail();
+        if (email.contains("@admin")){
+            name = curentUser.getEmail();
+            url = "https://firebasestorage.googleapis.com/v0/b/paspeechtrash.appspot.com/o/icon%2Fadmin.png?alt=media&token=e26d0f9c-10bc-4a33-913b-4761447e919a";
+        } else {
+            name = curentUser.getDisplayName();
+            url = String.valueOf(curentUser.getPhotoUrl());
+        }
         Marker marker;
-        MarkerData markerData = new MarkerData(String.valueOf(curentUser.getPhotoUrl()), gps.getLatitude(), gps.getLongitude(), curentUser.getDisplayName());
+        MarkerData markerData = new MarkerData(url, gps.getLatitude(), gps.getLongitude(), name);
         if (isFirstTime) {
             marker = setViewInMap(markerData, true);
         } else {
@@ -232,14 +244,17 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
     }
 
     private void saveToDatabase(String idDevice, String deviceName){
-        String icon = "https://firebasestorage.googleapis.com/v0/b/paspeechtrash.appspot.com/o/icon%2Ficon.png?alt=media&token=f8b2cb61-7a74-4b10-94fe-55d0465816db";
+        ProcessingHelper processingHelper = new ProcessingHelper();
+        long time = processingHelper.getDateNow();
+        String icon = "https://firebasestorage.googleapis.com/v0/b/paspeechtrash.appspot.com/o/icon%2Ficon.png?alt=media&token=31a55eac-e52b-4d71-9557-409035ead899";
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert firebaseUser != null;
+        String mKey = databaseReference.child("device").child(idDevice).child("history").child("full").push().getKey();
         databaseReference.child("list_device").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
         databaseReference.child("list_maps").child(idDevice).child("name").setValue(deviceName);
         databaseReference.child("list_maps").child(idDevice).child("imageUrl").setValue(icon);
-//        FirebaseDatabase.getInstance().getReference("user_profile").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
-//        FirebaseDatabase.getInstance().getReference("device").child(idDevice).child("deviceName").setValue(deviceName);
+        databaseReference.child("device").child(idDevice).child("history").child("full").child("lastKey").setValue(mKey);
+        databaseReference.child("device").child(idDevice).child("history").child("full").child(mKey).child("startDate").setValue(time);
         finish();
     }
 
@@ -249,7 +264,7 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
     }
 
     private void goToMainActivity() {
-        Intent intent = new Intent(PlaceActivity.this, MainActivity.class);
+        Intent intent = new Intent(PlaceActivity.this, AdminActivity.class);
         startActivity(intent);
     }
 }

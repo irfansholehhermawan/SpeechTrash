@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_maps"
+        android:icon="@drawable/ic_map_24dp"
+        android:title="Maps" />
+
+    <item
+        android:id="@+id/navigation_list_device"
+        android:icon="@drawable/ic_view_list_black_24dp"
+        android:title="List Device" />
+
+    <item
+        android:id="@+id/navigation_list_petugas"
+        android:icon="@drawable/ic_person_black_24dp"
+        android:title="Petugas" />
+</menu>

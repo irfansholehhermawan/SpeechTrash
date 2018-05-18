@@ -7,7 +7,7 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
  * Created by Sholeh Hermawan on 22/04/2018.
  */
 
-public class FirebaseInstance extends FirebaseInstanceIdService {
+public class MyFirebaseInstanceService extends FirebaseInstanceIdService {
 
     private static final String REG_TOKEN =  "REG_TOKEN";
 
@@ -15,7 +15,7 @@ public class FirebaseInstance extends FirebaseInstanceIdService {
 
     public void onTokenRefresh() {
         String recent_token = FirebaseInstanceId.getInstance().getToken();
-        PrefManager prefManager = new PrefManager(FirebaseInstance.this);
+        PrefManager prefManager = new PrefManager(MyFirebaseInstanceService.this);
         prefManager.setToken(recent_token);
     }
 }

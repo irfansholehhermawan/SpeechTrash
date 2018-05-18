@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -40,7 +41,7 @@ public class ReaderActivity extends AppCompatActivity implements ZXingScannerVie
         scannerView = new ZXingScannerView(this);
         setContentView(scannerView);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (!checkPermission()) {
                 requestPermission();
             }
@@ -69,19 +70,20 @@ public class ReaderActivity extends AppCompatActivity implements ZXingScannerVie
      * @param permission permission
      * @param grantResults grant result
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void onRequestPermissionsResult(int requestCode, @NonNull String permission[], @NonNull int grantResults[]) {
         switch (requestCode) {
             case REQUEST_CAMERA:
                 if (grantResults.length > 0) {
                     boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     if (!cameraAccepted) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                             if (shouldShowRequestPermissionRationale(CAMERA)) {
                                 displayAlertMessage(
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                                                     requestPermission(new String[]{CAMERA}, REQUEST_CAMERA);}
                                             }
 
@@ -101,7 +103,7 @@ public class ReaderActivity extends AppCompatActivity implements ZXingScannerVie
     @Override
     public void onResume() {
         super.onResume();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (checkPermission()) {
                 scannerView = new ZXingScannerView(this);
                 setContentView(scannerView);

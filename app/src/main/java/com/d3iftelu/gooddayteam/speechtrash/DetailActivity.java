@@ -9,6 +9,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -18,6 +21,7 @@ public class DetailActivity extends AppCompatActivity {
     public static final String ARGS_DEVICE_NAME = "device name";
     public static final String ARGS_DEVICE_ID = "device id";
     private static final String TAG = DetailActivity.class.getSimpleName();
+    private String mDeviceId, mDeviceName;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -41,7 +45,8 @@ public class DetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 //        String mDeviceName = intent.getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
-        String mDeviceId = intent.getStringExtra(DetailActivity.ARGS_DEVICE_ID);
+        mDeviceId = intent.getStringExtra(DetailActivity.ARGS_DEVICE_ID);
+        mDeviceName = intent.getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -144,5 +149,31 @@ public class DetailActivity extends AppCompatActivity {
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.petugas_device, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //to add option menu
+        switch (item.getItemId()) {
+            case R.id.change_petugas:
+                gotoChangePetugas();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void gotoChangePetugas() {
+        Intent gotoChangePetugas = new Intent(this, ListPetugasActivity.class);
+        gotoChangePetugas.putExtra(DetailActivity.ARGS_DEVICE_ID, mDeviceId);
+        gotoChangePetugas.putExtra(DetailActivity.ARGS_DEVICE_NAME, mDeviceName);
+        startActivity(gotoChangePetugas);
     }
 }

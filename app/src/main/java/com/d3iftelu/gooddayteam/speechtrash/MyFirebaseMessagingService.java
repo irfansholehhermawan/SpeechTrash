@@ -30,7 +30,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
      */
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
@@ -64,7 +64,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 	 * @param title
 	 * @param message
 	 */
-	@RequiresApi(api = Build.VERSION_CODES.M)
+	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 	private void sendMessageNotification(String title, String message, String messageId){
 		Log.d(TAG, "sendChatmessageNotification: building a chatmessage notification");
 
@@ -75,7 +75,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
 				getString(R.string.default_notification_channel_id));
 		// Creates an Intent for the Activity
-		Intent pendingIntent = new Intent(this, MainActivity.class);
+		Intent pendingIntent = new Intent(this, PetugasActivity.class);
 		// Sets the Activity to start in a new, empty task
 		pendingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		// Creates the PendingIntent

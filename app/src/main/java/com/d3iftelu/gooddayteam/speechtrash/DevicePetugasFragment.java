@@ -1,15 +1,14 @@
 package com.d3iftelu.gooddayteam.speechtrash;
 
-import android.content.DialogInterface;
+
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -29,47 +28,50 @@ import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 
-public class MainActivity extends AppCompatActivity {
 
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class DevicePetugasFragment extends Fragment {
+    private static final String TAG = "DevicePetugasFragment";
     private ListView mListViewDevice;
     private TextView mTextViewDataIsEmpty;
     private ProgressBar loadingData;
-
     private FirebaseUser mCurrentUser;
     private DeviceListAdapter mAdapter;
 
+    public DevicePetugasFragment() {
+        // Required empty public constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_device_petugas, container, false);
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
-        checkUser(mCurrentUser);
-        mListViewDevice = findViewById(R.id.list_view_device);
-        mTextViewDataIsEmpty = findViewById(R.id.text_view_empty_view);
-        loadingData = (ProgressBar) findViewById(R.id.item_progres_bar);
+        mListViewDevice = rootView.findViewById(R.id.list_view_device);
+        mTextViewDataIsEmpty = rootView.findViewById(R.id.text_view_empty_view);
+        loadingData = (ProgressBar) rootView.findViewById(R.id.item_progres_bar);
 
         final ArrayList<Device> devices = readDeviceData();
 
-        mAdapter = new DeviceListAdapter(this, devices);
+        mAdapter = new DeviceListAdapter(getContext(), devices);
         mListViewDevice.setAdapter(mAdapter);
         mListViewDevice.setEmptyView(mTextViewDataIsEmpty);
 
         mListViewDevice.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                Intent intent = new Intent(getContext(), FinishActivity.class);
                 intent.putExtra(DetailActivity.ARGS_DEVICE_NAME, devices.get(i).getDeviceName());
                 intent.putExtra(DetailActivity.ARGS_DEVICE_ID, devices.get(i).getDeviceId());
                 startActivity(intent);
-//                Toast.makeText(MainActivity.this, "Under Maintance!!!",Toast.LENGTH_LONG).show();
             }
         });
-    }
 
-    public void goToReader(View view) {
-        Intent intent = new Intent(MainActivity.this, ReaderActivity.class);
-        startActivity(intent);
+        return rootView;
     }
 
     private ArrayList<Device> readDeviceData() {
@@ -107,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
                                 myRef.child("device").child(deviceId).child("monitoring").child("volume").setValue(x);
                                 myRef.child("device").child(deviceId).child("monitoring").child("berat").setValue(x);
                                 myRef.child("device").child(deviceId).child("monitoring").child("time").setValue(String.valueOf(time));
-                                myRef.child("device").child(deviceId).child("history").child("startDate").setValue(time);
                             }
                             loadingData.setVisibility(View.GONE);
                             mAdapter.notifyDataSetChanged();
@@ -131,66 +132,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         return devicesData;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //to add option menu
-        switch (item.getItemId()) {
-            case R.id.list_maps:
-                Intent maps = new Intent(MainActivity.this, MapsActivity.class);
-                startActivity(maps);
-                return true;
-            case R.id.logout:
-                signOutCheck();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void signOutCheck(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setMessage("Do you want to Logout ?")
-                .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        FirebaseAuth.getInstance().signOut();
-                        Intent intentLogin = new Intent(MainActivity.this, LoginActivity.class);
-                        startActivity(intentLogin);
-                    }
-                }).setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.create().show();
-    }
-
-    private void checkUser(FirebaseUser firebaseUser){
-        if(firebaseUser == null){
-            goToLoginActivity();
-        }
-    }
-
-    private void goToLoginActivity(){
-        Intent intentLogin = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intentLogin);
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 }

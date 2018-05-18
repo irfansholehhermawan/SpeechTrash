@@ -10,7 +10,7 @@ import android.graphics.Path;
 import com.squareup.picasso.Transformation;
 
 public class BubbleTransformation implements Transformation {
-    private static final int outerMargin = 30;
+    private static final int outerMargin = 10;
     private final int margin;
 
     // margin is the board in dp
