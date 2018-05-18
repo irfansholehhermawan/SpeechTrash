@@ -61,7 +61,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".DetailListDeviceActivity"></activity>
+        <activity android:name=".DetailListDeviceActivity" />
+        <activity android:name=".DetailChatActivity"></activity>
     </application>
 
 </manifest>

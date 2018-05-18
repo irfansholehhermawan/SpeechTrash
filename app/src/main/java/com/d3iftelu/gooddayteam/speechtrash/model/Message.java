@@ -8,7 +8,7 @@ public class Message {
     public Message() {
     }
 
-    public Message(String name, String message, long timestamp) {
+    public Message(String message, String name, long timestamp) {
         this.name = name;
         this.message = message;
         this.timestamp = timestamp;
