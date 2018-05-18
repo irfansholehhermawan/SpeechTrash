@@ -43,8 +43,8 @@ public class PetugasActivity extends AppCompatActivity {
                 case R.id.navigation_chat:
                     changeFragment(new ChatFragment());
                     return true;
-                case R.id.navigation_device:
-                    changeFragment(new DevicePetugasFragment());
+                case R.id.navigation_show_chart:
+                    changeFragment(new ShowChartFragment());
                     return true;
             }
             return false;

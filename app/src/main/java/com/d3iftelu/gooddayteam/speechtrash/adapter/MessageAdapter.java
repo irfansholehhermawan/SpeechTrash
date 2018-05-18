@@ -1,5 +1,6 @@
 package com.d3iftelu.gooddayteam.speechtrash.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,19 +15,20 @@ import com.d3iftelu.gooddayteam.speechtrash.R;
 import com.d3iftelu.gooddayteam.speechtrash.model.Message;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MessageAdapter extends ArrayAdapter<Message> {
 
-    public MessageAdapter(@NonNull Context context, @NonNull ArrayList<Message> objects) {
-        super(context, 0, objects);
+    public MessageAdapter(Context context, int resource, List<Message> objects) {
+        super(context, resource, objects);
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View view = convertView;
-        if (view == null)
-            view = LayoutInflater.from(getContext()).inflate(R.layout.view_message, parent, false);
+        if (convertView == null) {
+            convertView = ((Activity) getContext()).getLayoutInflater().inflate(R.layout.view_message, parent, false);
+        }
 
 
         TextView messageTextView = (TextView) convertView.findViewById(R.id.messageTextView);
@@ -43,6 +45,6 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         messageTextView.setText(message.getMessage());
         timestampTextView.setText(waktu);
 
-        return view;
+        return convertView;
     }
 }

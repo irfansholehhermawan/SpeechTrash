@@ -11,7 +11,7 @@
         android:title="Chat" />
 
     <item
-        android:id="@+id/navigation_device"
-        android:icon="@drawable/ic_trash_black_24dp"
-        android:title="Device" />
+        android:id="@+id/navigation_show_chart"
+        android:icon="@drawable/ic_show_chart_black_24dp"
+        android:title="Chart" />
 </menu>

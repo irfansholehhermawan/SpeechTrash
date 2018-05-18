@@ -3,7 +3,6 @@ package com.d3iftelu.gooddayteam.speechtrash;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,21 +25,19 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import static android.content.ContentValues.TAG;
-
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DevicePetugasFragment extends Fragment {
-    private static final String TAG = "DevicePetugasFragment";
+public class ShowChartFragment extends Fragment {
+    private static final String TAG = "ShowChartFragment";
     private ListView mListViewDevice;
     private TextView mTextViewDataIsEmpty;
     private ProgressBar loadingData;
     private FirebaseUser mCurrentUser;
     private DeviceListAdapter mAdapter;
 
-    public DevicePetugasFragment() {
+    public ShowChartFragment() {
         // Required empty public constructor
     }
 
@@ -48,7 +45,7 @@ public class DevicePetugasFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_device_petugas, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_show_chart, container, false);
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         mListViewDevice = rootView.findViewById(R.id.list_view_device);
