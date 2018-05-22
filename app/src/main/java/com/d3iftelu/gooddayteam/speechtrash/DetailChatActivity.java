@@ -1,68 +1,67 @@
 package com.d3iftelu.gooddayteam.speechtrash;
 
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.d3iftelu.gooddayteam.speechtrash.adapter.MessageAdapter;
 import com.d3iftelu.gooddayteam.speechtrash.model.Message;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DetailChatActivity extends AppCompatActivity {
+    private static final String TAG = "DetailChatActivity";
     private FirebaseDatabase mDatabase;
     private FirebaseUser mCurrentUser;
     private DatabaseReference mMessagesReference;
-    private ChildEventListener mChildEventListener;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 1000;
     private ListView mMessageListView;
     private MessageAdapter mMessageAdapter;
     private ProgressBar mProgressBar;
     private EditText mMessageEditText;
     private ImageView mSendButton;
-    private String mDeviceId, mUsername;
+    private TextView mTextViewDataIsEmpty;
+    private String mDeviceId, admin_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_chat);
 
-        Intent intent = getIntent();
         mDeviceId = getIntent().getStringExtra(DetailActivity.ARGS_DEVICE_ID);
+        setTitle(mDeviceId);
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance();
         mMessagesReference = mDatabase.getReference().child("device").child(mDeviceId).child("messages");
 
-        mUsername = mCurrentUser.getUid();
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mTextViewDataIsEmpty = (TextView) findViewById(R.id.text_view_empty_view);
         mMessageListView = (ListView) findViewById(R.id.messageListView);
         mMessageEditText = (EditText) findViewById(R.id.messageEditText);
         mSendButton = (ImageView) findViewById(R.id.sendButton);
 
-        List<Message> messages = new ArrayList<>();
-        mMessageAdapter = new MessageAdapter(this, R.layout.view_message, messages);
+        final ArrayList<Message> messages = readMessageData();
+
+        mMessageAdapter = new MessageAdapter(this, messages);
         mMessageListView.setAdapter(mMessageAdapter);
+        mMessageListView.setEmptyView(mTextViewDataIsEmpty);
 
         // Initialize progress bar
         mProgressBar.setVisibility(ProgressBar.INVISIBLE);
@@ -96,55 +95,54 @@ public class DetailChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ProcessingHelper processingHelper = new ProcessingHelper();
                 long time = processingHelper.getDateNow();
-                Message message = new Message(mMessageEditText.getText().toString(), mCurrentUser.getDisplayName(), time);
+                Message message = new Message(admin_id, mMessageEditText.getText().toString(), mCurrentUser.getDisplayName(), time);
                 mMessagesReference.push().setValue(message);
 
                 mMessageEditText.setText("");
             }
         });
 
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+        mDatabase.getReference().child("device").child(mDeviceId).child("admin_id").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-
-                    onSignedInInitialize(user.getDisplayName());
-                }
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                admin_id = dataSnapshot.getValue(String.class);
+                Log.i(TAG, "adminID : " +admin_id);
             }
-        };
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
-    private void onSignedInInitialize(String username) {
-        mUsername = username;
-        attachDatabaseReadListener();
+    private ArrayList<Message> readMessageData() {
+        final ArrayList<Message> messageData = new ArrayList<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        final DatabaseReference myRef = database.getReference();
+        myRef.keepSynced(true);
+        myRef.child("device").child(mDeviceId).child("messages").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                messageData.clear();
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    final Message data = userSnapshot.getValue(Message.class);
+                    final Message dataId = new Message(data, userSnapshot.getKey());
+                    messageData.add(dataId);
+                }
+                mProgressBar.setVisibility(View.GONE);
+                mMessageAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
+        return messageData;
     }
-
-    private void attachDatabaseReadListener() {
-        if (mChildEventListener == null) {
-            mChildEventListener = new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Message message = dataSnapshot.getValue(Message.class);
-                    mMessageAdapter.add(message);
-                }
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                }
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                }
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                }
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            };
-            mMessagesReference.addChildEventListener(mChildEventListener);
-        }
-    }
-
-
 }

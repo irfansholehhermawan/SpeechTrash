@@ -253,6 +253,7 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
         databaseReference.child("list_device").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
         databaseReference.child("list_maps").child(idDevice).child("name").setValue(deviceName);
         databaseReference.child("list_maps").child(idDevice).child("imageUrl").setValue(icon);
+        databaseReference.child("device").child(idDevice).child("admin_id").setValue(curentUser.getUid());
         databaseReference.child("device").child(idDevice).child("history").child("full").child("lastKey").setValue(mKey);
         databaseReference.child("device").child(idDevice).child("history").child("full").child(mKey).child("startDate").setValue(time);
         finish();
