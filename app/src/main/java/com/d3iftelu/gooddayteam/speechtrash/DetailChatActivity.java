@@ -95,7 +95,17 @@ public class DetailChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ProcessingHelper processingHelper = new ProcessingHelper();
                 long time = processingHelper.getDateNow();
-                Message message = new Message(admin_id, mMessageEditText.getText().toString(), mCurrentUser.getDisplayName(), time);
+                String pengirim;
+                String name = mCurrentUser.getDisplayName();
+                if (name.equals("")){
+                    pengirim = mDeviceId;
+                } else {
+                    pengirim = name;
+                }
+                Log.i(TAG, "Uji id device : "+mDeviceId);
+                Log.i(TAG, "Uji name : "+name);
+                Log.i(TAG, "Uji pengirim : "+pengirim);
+                Message message = new Message(admin_id, mMessageEditText.getText().toString(), pengirim, time);
                 mMessagesReference.push().setValue(message);
 
                 mMessageEditText.setText("");
