@@ -50,10 +50,10 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_list_device, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
-        mListViewDevice = rootView.findViewById(R.id.list_view_device);
+        mListViewDevice = rootView.findViewById(R.id.list_device);
         mTextViewDataIsEmpty = rootView.findViewById(R.id.text_view_empty_view);
         loadingData = (ProgressBar) rootView.findViewById(R.id.item_progres_bar);
 

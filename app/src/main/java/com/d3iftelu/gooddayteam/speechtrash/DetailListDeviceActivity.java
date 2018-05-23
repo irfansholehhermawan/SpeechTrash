@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -65,6 +66,17 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
         mListViewDevice.setAdapter(mAdapter);
         mListViewDevice.setEmptyView(mTextViewDataIsEmpty);
         setTitle(mName);
+
+        mListViewDevice.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(DetailListDeviceActivity.this, DetailChatActivity.class);
+                intent.putExtra(DetailActivity.ARGS_DEVICE_NAME, devices.get(i).getDeviceName());
+                intent.putExtra(DetailActivity.ARGS_DEVICE_ID, devices.get(i).getDeviceId());
+                Log.i(TAG, "Uji idDevice : "+devices.get(i).getDeviceId());
+                startActivity(intent);
+            }
+        });
 
         MapView mapView = (MapView) findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);

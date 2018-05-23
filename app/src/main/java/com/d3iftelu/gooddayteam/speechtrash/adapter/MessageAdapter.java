@@ -19,8 +19,8 @@ import java.util.List;
 
 public class MessageAdapter extends ArrayAdapter<Message> {
 
-    public MessageAdapter(Context context, int resource, List<Message> objects) {
-        super(context, resource, objects);
+    public MessageAdapter(@NonNull Context context, @NonNull ArrayList<Message> objects) {
+        super(context, 0, objects);
     }
 
     @NonNull
@@ -33,17 +33,20 @@ public class MessageAdapter extends ArrayAdapter<Message> {
 
         TextView messageTextView = (TextView) convertView.findViewById(R.id.messageTextView);
         TextView authorTextView = (TextView) convertView.findViewById(R.id.nameTextView);
-        TextView timestampTextView = (TextView) convertView.findViewById(R.id.nameTextView);
+        TextView timestampDate = (TextView) convertView.findViewById(R.id.time_stamp);
+        TextView timestampTime = (TextView) convertView.findViewById(R.id.time_stamp2);
 
         Message message = getItem(position);
 
         ProcessingHelper processingHelper = new ProcessingHelper();
         long time = message.getTimestamp();
-        String waktu = processingHelper.changeUnixTimeStampToStringDate(time);
+        String date = processingHelper.changeToDate(time);
+        String waktu = processingHelper.changeToTime(time);
 
         authorTextView.setText(message.getName());
         messageTextView.setText(message.getMessage());
-        timestampTextView.setText(waktu);
+        timestampDate.setText(date);
+        timestampTime.setText(waktu);
 
         return convertView;
     }

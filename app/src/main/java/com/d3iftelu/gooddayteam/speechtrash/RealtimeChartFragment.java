@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.d3iftelu.gooddayteam.speechtrash.chart.MyMarkerView;
 import com.d3iftelu.gooddayteam.speechtrash.interface_fragment.IOnFocusListenable;
+import com.d3iftelu.gooddayteam.speechtrash.model.Message;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
@@ -48,8 +49,7 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
     private TextView mTextViewTime;
     private LineChart mChart;
 
-    private String mDeviceName;
-    private String mDeviceId;
+    private String mDeviceName, mDeviceId, user_id;
 
     FirebaseDatabase mFirebaseDatabase;
     DatabaseReference mDatabaseReference;
@@ -127,8 +127,6 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         l.setForm(Legend.LegendForm.LINE);
 
         readStatus();
-        setStatus();
-
         readText();
 
         return rootView;
@@ -181,6 +179,19 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean status = dataSnapshot.getValue(Boolean.class);
                 mSwitchStatus.setChecked(status);
+                setStatus();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        mDatabaseReference.child("device").child(mDeviceId).child("user_id").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                user_id = dataSnapshot.getValue(String.class);
+                Log.i(TAG, "userID : " + user_id);
             }
 
             @Override
@@ -195,12 +206,23 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean status) {
                 saveStatusToDatabase(status);
+                if (status){
+                    sendToMessage();
+                }
             }
         });
     }
 
     private void saveStatusToDatabase(boolean status) {
         mDatabaseReference.child("device").child(mDeviceId).child("status").setValue(status);
+    }
+
+    private void sendToMessage() {
+        ProcessingHelper processingHelper = new ProcessingHelper();
+        long time = processingHelper.getDateNow();
+        String pesan = "Tempat Sampah '"+mDeviceName+"' telah penuh. Mohon diambil! Terima Kasih.";
+        Message message = new Message(user_id, pesan, mDeviceId, time);
+        mDatabaseReference.child("device").child(mDeviceId).child("messages").push().setValue(message);
     }
 
     @Override

@@ -21,6 +21,21 @@ public class ProcessingHelper {
         return formattedDate;
     }
 
+    public String changeToTime(long unixTimeStamp){
+        Date date = new Date(unixTimeStamp*1000L);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        String formattedDate = sdf.format(date);
+        Log.i(TAG, "changeToTime: " + formattedDate);
+        return formattedDate;
+    }
+
+    public String changeToDate(long unixTimeStamp){
+        Date date = new Date(unixTimeStamp*1000L);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+        String formattedDate = sdf.format(date);
+        Log.i(TAG, "changeToDate: " + formattedDate);
+        return formattedDate;
+    }
 
     public long getDateNow(){
         return System.currentTimeMillis()/1000L;
