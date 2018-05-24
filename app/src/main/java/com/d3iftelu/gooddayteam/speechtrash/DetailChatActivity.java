@@ -37,7 +37,7 @@ public class DetailChatActivity extends AppCompatActivity {
     private EditText mMessageEditText;
     private ImageView mSendButton;
     private TextView mTextViewDataIsEmpty;
-    private String mDeviceId, admin_id;
+    private String mDeviceId, mDeviceName, admin_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,8 @@ public class DetailChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail_chat);
 
         mDeviceId = getIntent().getStringExtra(DetailActivity.ARGS_DEVICE_ID);
-        setTitle(mDeviceId);
+        mDeviceName= getIntent().getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
+        setTitle(mDeviceName);
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance();
@@ -95,6 +96,7 @@ public class DetailChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ProcessingHelper processingHelper = new ProcessingHelper();
                 long time = processingHelper.getDateNow();
+                String waktu = Long.toString(time);
                 String pengirim;
                 String name = mCurrentUser.getDisplayName();
                 if (name.equals("")){
@@ -105,7 +107,7 @@ public class DetailChatActivity extends AppCompatActivity {
                 Log.i(TAG, "Uji id device : "+mDeviceId);
                 Log.i(TAG, "Uji name : "+name);
                 Log.i(TAG, "Uji pengirim : "+pengirim);
-                Message message = new Message(admin_id, mMessageEditText.getText().toString(), pengirim, time);
+                Message message = new Message(admin_id, mMessageEditText.getText().toString(), pengirim, waktu);
                 mMessagesReference.push().setValue(message);
 
                 mMessageEditText.setText("");

@@ -111,7 +111,7 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
         leftAxis.setDrawLimitLinesBehindData(true);
 
         mChart.getAxisRight().setEnabled(false);
-        readVolume();
+        readBerat();
 
         mChart.animateX(2500);
         Legend l = mChart.getLegend();
@@ -138,7 +138,6 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
                     i++;
                 }
                 setData();
-
             }
 
             @Override
@@ -156,16 +155,19 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
         final DatabaseReference myRef = database.getReference();
         myRef.keepSynced(true);
 
-        myRef.child("device").child(mDeviceId).child("monitoring").addValueEventListener(new ValueEventListener() {
+        myRef.child("device").child(mDeviceId).child("prediksi").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mValuesBerat.clear();
-                int i = 1;
-                int data = dataSnapshot.child("berat").getValue(Integer.class);
-                Log.i(TAG, "onDataChange: " + data);
-                final Entry entry = new Entry(i, data);
-                mValuesBerat.add(entry);
-                i++;
+                int i = 0;
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    int data = userSnapshot.child("prediksi").getValue(Integer.class);
+                    Log.i(TAG, "onDataChange: " + data);
+                    final Entry entry = new Entry(i, data);
+                    mValuesBerat.add(entry);
+                    i++;
+                }
+                readVolume();
             }
 
             @Override
@@ -180,10 +182,10 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
     private void setData() {
         if (mChart.getData() != null &&
                 mChart.getData().getDataSetCount() > 0) {
-            mSetVolume = (LineDataSet) mChart.getData().getDataSetByIndex(0);
-            mSetVolume.setValues(mValuesVolume);
             mSetBerat = (LineDataSet) mChart.getData().getDataSetByIndex(0);
             mSetBerat.setValues(mValuesBerat);
+            mSetVolume = (LineDataSet) mChart.getData().getDataSetByIndex(0);
+            mSetVolume.setValues(mValuesVolume);
 
             mChart.getData().notifyDataChanged();
             mChart.notifyDataSetChanged();
@@ -192,8 +194,8 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
             mSetVolume = new LineDataSet(mValuesVolume, "Volume");
             mSetBerat = new LineDataSet(mValuesBerat, "Prediksi");
 
-            mSetVolume.setDrawIcons(false);
             mSetBerat.setDrawIcons(false);
+            mSetVolume.setDrawIcons(false);
 
             int color1 = ResourcesCompat.getColor(getResources(), R.color.colorChart1, null);
             mSetVolume.enableDashedHighlightLine(10f, 5f, 0f);
@@ -226,8 +228,8 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
             mSetBerat.setFillColor(color2);
 
             ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-            dataSets.add(mSetVolume);
             dataSets.add(mSetBerat);
+            dataSets.add(mSetVolume);
 
             LineData data = new LineData(dataSets);
             mChart.setData(data);

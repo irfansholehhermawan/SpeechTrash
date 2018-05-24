@@ -16,12 +16,6 @@
             android:layout_margin="16dp"
             android:singleLine="true"
             android:imeOptions="actionNext"
-            android:hint="@string/device_name"/>
+            android:hint="@string/device_id"/>
     </android.support.design.widget.TextInputLayout>
-
-    <!--<fragment-->
-        <!--android:id="@+id/map"-->
-        <!--android:name="com.google.android.gms.maps.SupportMapFragment"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"/>-->
 </LinearLayout>

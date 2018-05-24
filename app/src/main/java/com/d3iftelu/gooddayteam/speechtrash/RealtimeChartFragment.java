@@ -216,8 +216,9 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
     private void sendToMessage() {
         ProcessingHelper processingHelper = new ProcessingHelper();
         long time = processingHelper.getDateNow();
+        String waktu = Long.toString(time);
         String pesan = "Tempat Sampah '"+mDeviceName+"' telah penuh. Mohon diambil! Terima Kasih.";
-        Message message = new Message(user_id, pesan, mDeviceId, time);
+        Message message = new Message(user_id, pesan, mDeviceId, waktu);
         mDatabaseReference.child("device").child(mDeviceId).child("messages").push().setValue(message);
     }
 

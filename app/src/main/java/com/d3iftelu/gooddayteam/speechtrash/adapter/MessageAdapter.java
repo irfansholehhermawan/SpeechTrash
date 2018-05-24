@@ -39,9 +39,10 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         Message message = getItem(position);
 
         ProcessingHelper processingHelper = new ProcessingHelper();
-        long time = message.getTimestamp();
-        String date = processingHelper.changeToDate(time);
-        String waktu = processingHelper.changeToTime(time);
+        String time = message.getTimestamp();
+        long times = Long.parseLong(time);
+        String date = processingHelper.changeToDate(times);
+        String waktu = processingHelper.changeToTime(times);
 
         authorTextView.setText(message.getName());
         messageTextView.setText(message.getMessage());

@@ -27,4 +27,5 @@
 
     <!--SIGIN Email & Google-->
     <string name="auth_failed">Email or Password is wrong!! Pleace Check Again</string>
+    <string name="device_id">Device ID</string>
 </resources>

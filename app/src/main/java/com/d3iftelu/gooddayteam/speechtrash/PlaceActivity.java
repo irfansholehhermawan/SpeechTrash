@@ -211,7 +211,7 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
         // Get the layout inflater
         LayoutInflater inflater = getLayoutInflater();
 
-        View viewDialog = inflater.inflate(R.layout.dialog, null);
+        View viewDialog = inflater.inflate(R.layout.dialog_device_name, null);
         final EditText editTextName = viewDialog.findViewById(R.id.edit_text_name);
 
         final View title = inflater.inflate(R.layout.text_view_customize,null);

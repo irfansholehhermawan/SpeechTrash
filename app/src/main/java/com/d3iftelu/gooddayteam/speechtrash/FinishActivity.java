@@ -90,6 +90,7 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
         Intent intent = getIntent();
         mDeviceId = intent.getStringExtra(DetailActivity.ARGS_DEVICE_ID);
         mDeviceName = intent.getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
+        setTitle(mDeviceId);
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -256,8 +257,9 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
     private void sendToMessage() {
         ProcessingHelper processingHelper = new ProcessingHelper();
         long time = processingHelper.getDateNow();
+        String waktu = Long.toString(time);
         String pesan = "Tempat Sampah '"+mDeviceName+"' sudah diambil!";
-        Message message = new Message(admin_id, pesan, mCurrentUser.getDisplayName(), time);
+        Message message = new Message(admin_id, pesan, mCurrentUser.getDisplayName(), waktu);
         mDatabaseReference.child("device").child(mDeviceId).child("messages").push().setValue(message);
     }
 
