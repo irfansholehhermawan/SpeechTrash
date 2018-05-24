@@ -179,7 +179,12 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean status = dataSnapshot.getValue(Boolean.class);
                 mSwitchStatus.setChecked(status);
-                setStatus();
+                mSwitchStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isStatus) {
+                        saveStatusToDatabase(isStatus);
+                    }
+                });
             }
 
             @Override
@@ -201,19 +206,10 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         });
     }
 
-    private void setStatus() {
-        mSwitchStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean status) {
-                saveStatusToDatabase(status);
-                if (status){
-                    sendToMessage();
-                }
-            }
-        });
-    }
-
     private void saveStatusToDatabase(boolean status) {
+        if (status){
+            sendToMessage();
+        }
         mDatabaseReference.child("device").child(mDeviceId).child("status").setValue(status);
     }
 

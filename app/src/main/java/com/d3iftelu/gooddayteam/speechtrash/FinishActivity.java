@@ -8,10 +8,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import com.d3iftelu.gooddayteam.speechtrash.chart.MyMarkerChartView;
 import com.d3iftelu.gooddayteam.speechtrash.chart.MyMarkerView;
 import com.d3iftelu.gooddayteam.speechtrash.interface_fragment.IOnFocusListenable;
+import com.d3iftelu.gooddayteam.speechtrash.model.Message;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -32,6 +36,8 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,8 +52,9 @@ import java.util.Date;
 public class FinishActivity extends AppCompatActivity implements OnChartGestureListener, OnChartValueSelectedListener, IOnFocusListenable {
 
     private static String TAG = "FinishActivity";
-    private String mDeviceId, lastKey;
-
+    private String mDeviceId, mDeviceName, lastKey, admin_id;
+    private Switch mSwitchStatus;
+    private TextView mTextViewDeviceName;
     private LineChart mChart;
     private BarChart mBarChart;
 
@@ -64,6 +71,7 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
     private ArrayList<BarEntry> volumeValueBar = new ArrayList<>();
     private ArrayList<BarEntry> beratValueBar = new ArrayList<>();
 
+    private FirebaseUser mCurrentUser;
     FirebaseDatabase mFirebaseDatabase;
     DatabaseReference mDatabaseReference;
 
@@ -81,9 +89,14 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
 
         Intent intent = getIntent();
         mDeviceId = intent.getStringExtra(DetailActivity.ARGS_DEVICE_ID);
+        mDeviceName = intent.getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
 
+        mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseDatabase.getReference();
+        mSwitchStatus = findViewById(R.id.switch_status);
+        mTextViewDeviceName = findViewById(R.id.text_view_device_name);
+        mTextViewDeviceName.setText(mDeviceName);
         readLastKey();
 
         mValuesVolume = new ArrayList<>();
@@ -187,8 +200,65 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
         mBarChart.getAxisRight().setEnabled(false);
 
         getBarData();
-
+        readStatus();
         setViewOfChart();
+    }
+
+    private void readStatus() {
+        mDatabaseReference.child("device").child(mDeviceId).child("status").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean status = dataSnapshot.getValue(Boolean.class);
+                mSwitchStatus.setChecked(status);
+                mSwitchStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isStatus) {
+                        saveStatusToDatabase(isStatus);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        mDatabaseReference.child("device").child(mDeviceId).child("admin_id").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                admin_id = dataSnapshot.getValue(String.class);
+                Log.i(TAG, "userID : " + admin_id);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void saveStatusToDatabase(boolean status) {
+        if (!status){
+            sendToMessage();
+            saveHistoryFull();
+        }
+        mDatabaseReference.child("device").child(mDeviceId).child("status").setValue(status);
+    }
+
+    private void saveHistoryFull() {
+        ProcessingHelper processingHelper = new ProcessingHelper();
+        long time = processingHelper.getDateNow();
+        String mKey = mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").push().getKey();
+        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child("lastKey").setValue(mKey);
+        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(mKey).child("startDate").setValue(time);
+    }
+
+    private void sendToMessage() {
+        ProcessingHelper processingHelper = new ProcessingHelper();
+        long time = processingHelper.getDateNow();
+        String pesan = "Tempat Sampah '"+mDeviceName+"' sudah diambil!";
+        Message message = new Message(admin_id, pesan, mCurrentUser.getDisplayName(), time);
+        mDatabaseReference.child("device").child(mDeviceId).child("messages").push().setValue(message);
     }
 
     private void readLastKey() {
