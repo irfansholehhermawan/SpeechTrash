@@ -49,7 +49,7 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
     private TextView mTextViewTime;
     private LineChart mChart;
 
-    private String mDeviceName, mDeviceId, user_id;
+    private String mDeviceName, mDeviceId, user_id, mKey;
 
     FirebaseDatabase mFirebaseDatabase;
     DatabaseReference mDatabaseReference;
@@ -127,12 +127,12 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         l.setForm(Legend.LegendForm.LINE);
 
         readStatus();
-        readText();
+        readRealtimeData();
 
         return rootView;
     }
 
-    private void readText() {
+    private void readRealtimeData() {
         mDatabaseReference.child("device").child(mDeviceId).child("monitoring").child("time").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

@@ -178,8 +178,7 @@ public class AdminActivity extends AppCompatActivity {
     }
 
     private void cekId(String deviceID){
-        Toast.makeText(AdminActivity.this, "ID Device Sudah ada!", Toast.LENGTH_SHORT).show();
-        changeFragment(new ListDeviceFragment());
+//        Toast.makeText(AdminActivity.this, "ID Device Sudah ada!", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(AdminActivity.this, DetailActivity.class);
         intent.putExtra(DetailActivity.ARGS_DEVICE_ID, deviceID);
         startActivity(intent);

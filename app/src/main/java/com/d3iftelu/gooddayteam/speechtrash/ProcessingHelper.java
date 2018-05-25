@@ -37,6 +37,14 @@ public class ProcessingHelper {
         return formattedDate;
     }
 
+    public String changeToChild(long unixTimeStamp){
+        Date date = new Date(unixTimeStamp*1000L);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
+        String formattedDate = sdf.format(date);
+        Log.i(TAG, "changeToDate: " + formattedDate);
+        return formattedDate;
+    }
+
     public long getDateNow(){
         return System.currentTimeMillis()/1000L;
     }

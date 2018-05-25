@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.d3iftelu.gooddayteam.speechtrash.model.MarkerData;
+import com.d3iftelu.gooddayteam.speechtrash.model.Trash;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -258,6 +259,16 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
         databaseReference.child("device").child(idDevice).child("history").child("full").child(mKey).child("startDate").setValue(time);
         databaseReference.child("device").child(idDevice).child("prediksi").child(mKey).child("volume").setValue(0);
         databaseReference.child("device").child(idDevice).child("prediksi").child(mKey).child("prediksi").setValue(0);
+        int x = 0;
+        databaseReference.child("device").child(idDevice).child("monitoring").child("volume").setValue(x);
+        databaseReference.child("device").child(idDevice).child("monitoring").child("berat").setValue(x);
+        databaseReference.child("device").child(idDevice).child("monitoring").child("time").setValue(String.valueOf(time));
+        databaseReference.child("device").child(idDevice).child("status").setValue(false);
+        Trash trash = new Trash(0,0);
+        databaseReference.child("device").child(idDevice).child("realtime").push().setValue(trash);
+//        String mLastKey = processingHelper.changeToChild(time);
+//        databaseReference.child("device").child(idDevice).child("realtime").child("keyRealtime").setValue(mLastKey);
+//        databaseReference.child("device").child(idDevice).child("realtime").child(mLastKey).push().setValue(trash);
         finish();
     }
 

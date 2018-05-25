@@ -107,6 +107,8 @@ public class ListDeviceFragment extends Fragment {
                             } catch (NullPointerException e){
                                 myRef.child("device").child(deviceId).child("status").setValue(false);
                                 device.setStatus(false);
+                                myRef.child("device").child(deviceId).child("statusConnect").setValue(false);
+                                device.setStatus(false);
 
                                 int x = 0;
                                 ProcessingHelper processingHelper = new ProcessingHelper();
