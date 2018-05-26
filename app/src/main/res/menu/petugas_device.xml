@@ -4,6 +4,6 @@
     <item
         android:id="@+id/change_petugas"
         android:icon="@drawable/ic_person_add_white_24dp"
-        app:showAsAction="always"
-        android:title="Petugas" />
+        app:showAsAction="never"
+        android:title="Add or Change Officer" />
 </menu>

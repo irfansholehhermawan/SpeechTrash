@@ -64,7 +64,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/editor/ic_show_chart_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/content/ic_add_box_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -74,8 +74,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_logout" />
+                            <entry key="color" value="ffffff" />
+                            <entry key="outputName" value="ic_add_box_black_24dp" />
                             <entry key="sourceFile" value="C:\Users\SALADKING\Downloads\logout.svg" />
                           </map>
                         </option>

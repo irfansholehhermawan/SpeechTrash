@@ -35,11 +35,13 @@ public class AdminActivity extends AppCompatActivity {
     private static final String TAG = "AdminActivity";
     private FirebaseUser mCurrentUser;
     private boolean cek;
+    private String cekMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
+        Log.i(TAG, "MENU: " + cekMenu);
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         checkUser(mCurrentUser);
@@ -58,12 +60,18 @@ public class AdminActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_maps:
                     changeFragment(new MapsFragment());
+                    cekMenu = "maps";
+                    Log.i(TAG, "MENU: " + cekMenu);
                     return true;
                 case R.id.navigation_list_device:
                     changeFragment(new ListDeviceFragment());
+                    cekMenu = "device";
+                    Log.i(TAG, "MENU: " + cekMenu);
                     return true;
                 case R.id.navigation_list_petugas:
                     changeFragment(new ListPetugasFragment());
+                    cekMenu = "officers";
+                    Log.i(TAG, "MENU: " + cekMenu);
                     return true;
             }
             return false;
@@ -87,6 +95,20 @@ public class AdminActivity extends AppCompatActivity {
         inflater.inflate(R.menu.menu_main_admin, menu);
         return true;
     }
+
+//    /**
+//     * This method is called after invalidateOptionsMenu(), so that the
+//     * menu can be updated (some menu items can be hidden or made visible).
+//     */
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//        super.onPrepareOptionsMenu(menu);
+//        if (cekMenu == null) {
+//            MenuItem menuItem = menu.findItem(R.id.add_device_with_text);
+//            menuItem.setVisible(false);
+//        }
+//        return true;
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -178,7 +200,6 @@ public class AdminActivity extends AppCompatActivity {
     }
 
     private void cekId(String deviceID){
-//        Toast.makeText(AdminActivity.this, "ID Device Sudah ada!", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(AdminActivity.this, DetailActivity.class);
         intent.putExtra(DetailActivity.ARGS_DEVICE_ID, deviceID);
         startActivity(intent);

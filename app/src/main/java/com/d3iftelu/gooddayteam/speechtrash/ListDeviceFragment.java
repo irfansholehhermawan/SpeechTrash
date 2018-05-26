@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.d3iftelu.gooddayteam.speechtrash.adapter.DeviceListAdapter;
 import com.d3iftelu.gooddayteam.speechtrash.model.Device;
+import com.d3iftelu.gooddayteam.speechtrash.model.Trash;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -110,12 +111,11 @@ public class ListDeviceFragment extends Fragment {
                                 myRef.child("device").child(deviceId).child("statusConnect").setValue(false);
                                 device.setStatus(false);
 
-                                int x = 0;
                                 ProcessingHelper processingHelper = new ProcessingHelper();
                                 long time = processingHelper.getDateNow();
-                                myRef.child("device").child(deviceId).child("monitoring").child("volume").setValue(x);
-                                myRef.child("device").child(deviceId).child("monitoring").child("berat").setValue(x);
-                                myRef.child("device").child(deviceId).child("monitoring").child("time").setValue(String.valueOf(time));
+                                Trash trashMonitoring = new Trash(0,0, String.valueOf(time));
+                                myRef.child("device").child(deviceId).child("monitoring").setValue(trashMonitoring);
+                                myRef.child("device").child(deviceId).child("history").child("start").setValue(String.valueOf(time));
                             }
                             loadingData.setVisibility(View.GONE);
                             mAdapter.notifyDataSetChanged();

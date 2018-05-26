@@ -186,7 +186,6 @@ public class ReaderActivity extends AppCompatActivity implements ZXingScannerVie
     }
 
     private void cekId(String deviceID){
-        Toast.makeText(ReaderActivity.this, "ID Device Sudah ada!", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(ReaderActivity.this, DetailActivity.class);
         intent.putExtra(DetailActivity.ARGS_DEVICE_ID, deviceID);
         startActivity(intent);

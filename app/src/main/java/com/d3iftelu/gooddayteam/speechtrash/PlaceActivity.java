@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.d3iftelu.gooddayteam.speechtrash.model.History;
 import com.d3iftelu.gooddayteam.speechtrash.model.MarkerData;
 import com.d3iftelu.gooddayteam.speechtrash.model.Trash;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -245,31 +246,31 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
     }
 
     private void saveToDatabase(String idDevice, String deviceName){
-        ProcessingHelper processingHelper = new ProcessingHelper();
-        long time = processingHelper.getDateNow();
         String icon = "https://firebasestorage.googleapis.com/v0/b/paspeechtrash.appspot.com/o/icon%2Ficon.png?alt=media&token=31a55eac-e52b-4d71-9557-409035ead899";
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert firebaseUser != null;
+
+        Trash trash = new Trash(0,0);
+        ProcessingHelper processingHelper = new ProcessingHelper();
+        long time = processingHelper.getDateNow();
         String mKey = databaseReference.child("device").child(idDevice).child("history").child("full").push().getKey();
+
+        History historyFull = new History(String.valueOf(time), String.valueOf(time));
+        databaseReference.child("device").child(idDevice).child("realtime").push().setValue(trash);
+        databaseReference.child("device").child(idDevice).child("history").child("lastKey").setValue(mKey);
+        databaseReference.child("device").child(idDevice).child("history").child("full").child(mKey).setValue(historyFull);
+
         databaseReference.child("list_device").child(firebaseUser.getUid()).child(idDevice).setValue(deviceName);
         databaseReference.child("list_maps").child(idDevice).child("name").setValue(deviceName);
         databaseReference.child("list_maps").child(idDevice).child("imageUrl").setValue(icon);
         databaseReference.child("device").child(idDevice).child("admin_id").setValue(curentUser.getUid());
-        databaseReference.child("device").child(idDevice).child("history").child("full").child("lastKey").setValue(mKey);
-        databaseReference.child("device").child(idDevice).child("history").child("full").child(mKey).child("startDate").setValue(time);
-        databaseReference.child("device").child(idDevice).child("prediksi").child(mKey).child("volume").setValue(0);
-        databaseReference.child("device").child(idDevice).child("prediksi").child(mKey).child("prediksi").setValue(0);
-        int x = 0;
-        databaseReference.child("device").child(idDevice).child("monitoring").child("volume").setValue(x);
-        databaseReference.child("device").child(idDevice).child("monitoring").child("berat").setValue(x);
-        databaseReference.child("device").child(idDevice).child("monitoring").child("time").setValue(String.valueOf(time));
-        databaseReference.child("device").child(idDevice).child("status").setValue(false);
-        Trash trash = new Trash(0,0);
-        databaseReference.child("device").child(idDevice).child("realtime").push().setValue(trash);
+        finish();
+
+//        databaseReference.child("device").child(idDevice).child("prediksi").child(mKey).child("volume").setValue(0);
+//        databaseReference.child("device").child(idDevice).child("prediksi").child(mKey).child("prediksi").setValue(0);
 //        String mLastKey = processingHelper.changeToChild(time);
 //        databaseReference.child("device").child(idDevice).child("realtime").child("keyRealtime").setValue(mLastKey);
 //        databaseReference.child("device").child(idDevice).child("realtime").child(mLastKey).push().setValue(trash);
-        finish();
     }
 
     private void saveListDevice(LatLng myPosition) {
@@ -280,5 +281,12 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
     private void goToMainActivity() {
         Intent intent = new Intent(PlaceActivity.this, AdminActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(PlaceActivity.this, AdminActivity.class);
+        startActivity(intent);
+        super.onBackPressed();  // optional depending on your needs
     }
 }

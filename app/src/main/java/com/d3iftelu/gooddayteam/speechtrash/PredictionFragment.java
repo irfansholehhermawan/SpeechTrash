@@ -11,9 +11,12 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.d3iftelu.gooddayteam.speechtrash.chart.MyMarkerView;
 import com.d3iftelu.gooddayteam.speechtrash.interface_fragment.IOnFocusListenable;
+import com.d3iftelu.gooddayteam.speechtrash.model.History;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
@@ -42,11 +45,19 @@ import java.util.ArrayList;
 public class PredictionFragment extends Fragment  implements OnChartGestureListener, OnChartValueSelectedListener, IOnFocusListenable {
     private static final String TAG = PredictionFragment.class.getSimpleName();
     private LineChart mChart;
-    private String mDeviceName, mDeviceId, user_id;
+    private String prediction;
+    private String mDeviceName, mDeviceId;
+    private TextView mTextViewEmpty;
+    private TextView mTextViewWaktuStart;
+    private TextView mTextViewWaktuNow;
+    private TextView mTextViewWaktuPrediction;
+    private ProgressBar loadingData;
+    public ArrayList<History> historyFull = new ArrayList<>();
 
     FirebaseDatabase mFirebaseDatabase;
     DatabaseReference mDatabaseReference;
 
+    ProcessingHelper convert;
     ArrayList<Entry> mValuesVolume;
     ArrayList<Entry> mValuesBerat;
     LineDataSet mSetVolume;
@@ -67,11 +78,25 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
         Intent intent = getActivity().getIntent();
         mDeviceName = intent.getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
         mDeviceId = intent.getStringExtra(DetailActivity.ARGS_DEVICE_ID);
+        mTextViewEmpty = (TextView) rootView.findViewById(R.id.empty_text_view);
+        mTextViewWaktuStart = (TextView) rootView.findViewById(R.id.time_now);
+        mTextViewWaktuNow = (TextView) rootView.findViewById(R.id.time_start);
+        mTextViewWaktuPrediction = (TextView) rootView.findViewById(R.id.time_prediction);
+        loadingData = (ProgressBar) rootView.findViewById(R.id.loading_text_view);
+        loadingData.setVisibility(View.VISIBLE);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseDatabase.getReference();
         mValuesVolume = new ArrayList<>();
         mValuesBerat = new ArrayList<>();
+        convert = new ProcessingHelper();
+
+
+        if (mValuesBerat == null || mValuesVolume == null){
+            mTextViewEmpty.setVisibility(View.VISIBLE);
+        } else {
+            mTextViewEmpty.setVisibility(View.GONE);
+        }
 
         // ChartLine
         mChart = rootView.findViewById(R.id.line_chart);
@@ -117,7 +142,100 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
         Legend l = mChart.getLegend();
         l.setForm(Legend.LegendForm.LINE);
 
+        readRealtimeData();
+        dataPrediction();
+
         return rootView;
+    }
+
+    private void dataPrediction() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = database.getReference();
+        myRef.keepSynced(true);
+        myRef.child("device").child(mDeviceId).child("history").child("full").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int i = 0;
+                historyFull.clear();
+                if (dataSnapshot != null) {
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                        Log.i(TAG, "DataPred " + " : " + userSnapshot.getKey());
+                            History history = userSnapshot.getValue(History.class);
+                            historyFull.add(history);
+
+                    }
+                    prediction = String.valueOf(calculateAverage(historyFull));
+                    mTextViewWaktuPrediction.setText(prediction);
+                    Log.i(TAG, "DataPrediksi " + i + " : " + calculateAverage(historyFull));
+
+                } else {
+                    Log.i(TAG, "ZONK!");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
+    }
+
+    private int calculateAverage(ArrayList<History> marks) {
+        int average = 0;
+        if(marks != null){
+            for(int i=0; i <= (marks.size()-1); i++){
+                average += marks.get(i).ConvertToHasil();
+            }
+        }
+
+        assert marks != null;
+        return average / marks.size();
+    }
+
+    private void readRealtimeData() {
+        mDatabaseReference.child("device").child(mDeviceId).child("monitoring").child("time").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String time = dataSnapshot.getValue(String.class);
+                long waktu = Long.parseLong(time);
+                ProcessingHelper processingHelper = new ProcessingHelper();
+                mTextViewWaktuStart.setText(processingHelper.changeToDate(waktu));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        mDatabaseReference.child("device").child(mDeviceId).child("history").child("lastKey").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String lastKey = dataSnapshot.getValue(String.class);
+
+                mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(lastKey).child("startDate").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String time = dataSnapshot.getValue(String.class);
+                        long waktu = Long.parseLong(time);
+                        ProcessingHelper processingHelper = new ProcessingHelper();
+                        mTextViewWaktuNow.setText(processingHelper.changeToDate(waktu));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void readVolume() {
@@ -168,6 +286,7 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
                     i++;
                 }
                 readVolume();
+                loadingData.setVisibility(View.GONE);
             }
 
             @Override
