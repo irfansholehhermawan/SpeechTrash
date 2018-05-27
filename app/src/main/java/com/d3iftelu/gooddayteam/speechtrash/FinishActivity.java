@@ -250,8 +250,9 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
         ProcessingHelper processingHelper = new ProcessingHelper();
         long time = processingHelper.getDateNow();
         String mKey = mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").push().getKey();
-        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child("lastKey").setValue(mKey);
-        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(mKey).child("startDate").setValue(time);
+        mDatabaseReference.child("device").child(mDeviceId).child("history").child("lastKey").setValue(mKey);
+        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(mKey).child("startDate").setValue(String.valueOf(time));
+        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(mKey).child("finishDate").setValue(String.valueOf(time));
     }
 
     private void sendToMessage() {
