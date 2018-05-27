@@ -93,6 +93,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 						R.mipmap.ic_launcher_round))
 				.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
 				.setContentTitle(title)
+				.setContentText(message)
 				.setAutoCancel(true)
 				//.setSubText(message)
 				.setStyle(new NotificationCompat.BigTextStyle().bigText(message))

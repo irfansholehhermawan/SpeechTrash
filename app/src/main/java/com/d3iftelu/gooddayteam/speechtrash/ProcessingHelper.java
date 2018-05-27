@@ -41,7 +41,7 @@ public class ProcessingHelper {
         Date date = new Date(unixTimeStamp*1000L);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
         String formattedDate = sdf.format(date);
-        Log.i(TAG, "changeToDate: " + formattedDate);
+        Log.i(TAG, "changeToChild: " + formattedDate);
         return formattedDate;
     }
 

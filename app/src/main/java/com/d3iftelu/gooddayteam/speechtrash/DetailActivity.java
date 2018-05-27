@@ -20,6 +20,7 @@ public class DetailActivity extends AppCompatActivity {
 
     public static final String ARGS_DEVICE_NAME = "device name";
     public static final String ARGS_DEVICE_ID = "device id";
+    public static final String ARGS_LAST_KEY = "last key";
     private static final String TAG = DetailActivity.class.getSimpleName();
     private String mDeviceId, mDeviceName;
 

@@ -120,7 +120,7 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         leftAxis.setDrawLimitLinesBehindData(true);
 
         mChart.getAxisRight().setEnabled(false);
-        readVolume();
+        readBerat();
 
         mChart.animateX(2500);
         Legend l = mChart.getLegend();
@@ -244,7 +244,7 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
                     mValuesVolume.add(entry);
                     i++;
                 }
-                readBerat();
+                setData();
             }
 
             @Override
@@ -278,8 +278,7 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
                         e.printStackTrace();
                     }
                 }
-
-                setData();
+                readVolume();
             }
 
             @Override
@@ -333,7 +332,7 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
             mSetBerat.setDrawCircleHole(false);
             mSetBerat.setValueTextSize(9f);
             mSetBerat.setDrawValues(false);
-//            mSetBerat.setDrawFilled(true);
+//            mSetPrediction.setDrawFilled(true);
             mSetBerat.setFormLineWidth(1f);
             mSetBerat.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
             mSetBerat.setFormSize(15.f);

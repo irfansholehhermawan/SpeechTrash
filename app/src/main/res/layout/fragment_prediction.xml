@@ -17,26 +17,12 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/empty_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:drawablePadding="8dp"
-                android:gravity="center"
-                android:text="@string/empty_view_title_text"/>
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/line_chart"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="16dp">
             </com.github.mikephil.charting.charts.LineChart>
-            <ProgressBar
-                android:layout_above="@id/empty_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:id="@+id/loading_text_view"/>
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
@@ -62,11 +48,15 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Prediction is Full"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Date Now"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Prediction is Full"/>
+                    android:text="Date Finish "/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -74,6 +64,10 @@
                 android:orientation="vertical"
                 android:layout_weight="0"
                 android:paddingTop="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=":"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -98,11 +92,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="28 Mei 2018"/>
-                <TextView
-                    android:id="@+id/time_now"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="30 Mei 2018"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
@@ -112,10 +101,21 @@
                         android:layout_height="wrap_content"
                         android:text="0"/>
                     <TextView
+                        android:id="@+id/text_day"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=" Day"/>
                 </LinearLayout>
+                <TextView
+                    android:id="@+id/time_now"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="29 Mei 2018"/>
+                <TextView
+                    android:id="@+id/time_finish"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="31 Mei 2018"/>
             </LinearLayout>
         </LinearLayout>
 

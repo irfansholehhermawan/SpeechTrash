@@ -490,7 +490,7 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
             mSetBerat.setDrawCircleHole(false);
             mSetBerat.setValueTextSize(9f);
             mSetBerat.setDrawValues(false);
-//            mSetBerat.setDrawFilled(true);
+//            mSetPrediction.setDrawFilled(true);
             mSetBerat.setFormLineWidth(1f);
             mSetBerat.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
             mSetBerat.setFormSize(15.f);
