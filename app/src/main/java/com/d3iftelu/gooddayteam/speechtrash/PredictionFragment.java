@@ -36,7 +36,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static android.content.ContentValues.TAG;
 
@@ -47,7 +49,7 @@ import static android.content.ContentValues.TAG;
 public class PredictionFragment extends Fragment  implements OnChartGestureListener, OnChartValueSelectedListener, IOnFocusListenable {
     private static final String TAG = PredictionFragment.class.getSimpleName();
     private LineChart mChart;
-    private String prediction, mDeviceId, dateNow;
+    private String prediction, mDeviceId;
     private TextView mTextViewDay;
     private TextView mTextViewWaktuStart;
     private TextView mTextViewWaktuFinish;
@@ -58,7 +60,6 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
     FirebaseDatabase mFirebaseDatabase;
     DatabaseReference mDatabaseReference;
 
-    ProcessingHelper convert;
     ArrayList<Entry> mValuesVolume;
     ArrayList<Entry> mValuesPrediction;
     LineDataSet mSetVolume;
@@ -88,12 +89,6 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
         mDatabaseReference = mFirebaseDatabase.getReference();
         mValuesVolume = new ArrayList<>();
         mValuesPrediction = new ArrayList<>();
-        convert = new ProcessingHelper();
-        long time = convert.getDateNow();
-        dateNow = convert.changeToChild(time);
-        Log.i(TAG, "DateNow: " + dateNow);
-
-//        createPrediksi(4,"2018-May-24");
 
         // ChartLine
         mChart = rootView.findViewById(R.id.line_chart);
@@ -133,51 +128,16 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
         leftAxis.setDrawLimitLinesBehindData(true);
 
         mChart.getAxisRight().setEnabled(false);
-        readDataPrediction();
+        dataPrediction();
 
         mChart.animateX(2500);
         Legend l = mChart.getLegend();
         l.setForm(Legend.LegendForm.LINE);
 
         readRealtimeData();
-        dataPrediction();
 
         return rootView;
     }
-
-//    private void createPrediksi(final int prediction, final String dateStart) {
-//        mDatabaseReference.child("device").child(mDeviceId).child("history").child("lastKey").addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                String lastKey = dataSnapshot.getValue(String.class);
-//                Log.i(TAG, "KEYDEVICE : " + lastKey);
-//
-//                String[] arrayStart = dateStart.split("-");
-//                String startDate = arrayStart[2];
-//                int tgl = Integer.parseInt(startDate);
-//                int valuePrediction = 100/prediction;
-//                int x = 0;
-//                for (int i=0; i <= prediction; i++){
-//                    if (i == 0){
-//                        x = 0;
-//                    } else {
-//                        x = x + valuePrediction;
-//                    }
-//                    String childDate = arrayStart[0] + "-" + arrayStart[1] + "-" +  tgl;
-//                    Log.i(TAG, "childDate: " + childDate);
-//                    tgl++;
-//
-//                    mDatabaseReference.child("device").child(mDeviceId).child("prediksi").child(lastKey).child(childDate).child("prediksi").setValue(x);
-//                    mDatabaseReference.child("device").child(mDeviceId).child("prediksi").child(lastKey).child(childDate).child("volume").setValue(x);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
 
     private void dataPrediction() {
         final int[] averagePrediction = new int[1];
@@ -276,6 +236,7 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
                                 mTextViewDay.setVisibility(View.GONE);
                             }
                         }
+                        readDataPrediction(lastKey);
                     }
 
                     @Override
@@ -308,10 +269,12 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
         mDatabaseReference.child("device").child(mDeviceId).child("monitoring").child("time").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String time = dataSnapshot.getValue(String.class);
-                long waktu = Long.parseLong(time);
-                ProcessingHelper processingHelper = new ProcessingHelper();
-                mTextViewWaktuNow.setText(processingHelper.changeToDate(waktu));
+                if (dataSnapshot.exists()) {
+                    String time = dataSnapshot.getValue(String.class);
+                    long waktu = Long.parseLong(time);
+                    ProcessingHelper processingHelper = new ProcessingHelper();
+                    mTextViewWaktuNow.setText(processingHelper.changeToDate(waktu));
+                }
             }
 
             @Override
@@ -321,25 +284,25 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
         });
     }
 
-    private void readDataVolume() {
+    private void readDataVolume(String lastKey) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference();
         myRef.keepSynced(true);
-        myRef.child("device").child(mDeviceId).child("prediksi").addValueEventListener(new ValueEventListener() {
+        myRef.child("device").child(mDeviceId).child("prediksi").child(lastKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mValuesVolume.clear();
                 int i = 0;
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                    for (DataSnapshot dateSnapshot : userSnapshot.getChildren()){
-                        int data = dateSnapshot.child("volume").getValue(Integer.class);
+                    if (userSnapshot.exists()) {
+                        int data = userSnapshot.child("volume").getValue(Integer.class);
                         Log.i(TAG, "onDataChange: " + data);
                         final Entry entry = new Entry(i, data);
                         mValuesVolume.add(entry);
                         i++;
                     }
-                    setData();
                 }
+                setData();
             }
 
             @Override
@@ -351,26 +314,26 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
         });
     }
 
-    private void readDataPrediction() {
+    private void readDataPrediction(final String lastKey) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference();
         myRef.keepSynced(true);
 
-        myRef.child("device").child(mDeviceId).child("prediksi").addValueEventListener(new ValueEventListener() {
+        myRef.child("device").child(mDeviceId).child("prediksi").child(lastKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mValuesPrediction.clear();
                 int i = 0;
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                    for (DataSnapshot dateSnapshot : userSnapshot.getChildren()){
-                        String data = dateSnapshot.child("prediksi").getValue(String.class);
+                    if (userSnapshot.exists()) {
+                        String data = userSnapshot.child("prediksi").getValue(String.class);
                         Log.i(TAG, "onDataChange: " + data);
                         final Entry entry = new Entry(i, Integer.parseInt(data));
                         mValuesPrediction.add(entry);
                         i++;
                     }
-                    readDataVolume();
                 }
+                readDataVolume(lastKey);
             }
 
             @Override

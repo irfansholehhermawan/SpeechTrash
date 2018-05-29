@@ -4,9 +4,11 @@
     <string name="empty_view_title_text">Data is Empty!!!</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_submit">Submit</string>
+    <string name="dialog_change">Change</string>
+    <string name="dialog_add">Add</string>
     <string name="device_name">Device Name</string>
     <string name="image_description_status_device">Show Device Status FULL or NOT</string>
-    <string name="delete_data_question">Are You Sure?</string>
+    <string name="delete_data_question">Are you sure want to delete?</string>
     <string name="text_logout">Logout</string>
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
@@ -29,4 +31,5 @@
     <!--SIGIN Email & Google-->
     <string name="auth_failed">Email or Password is wrong!! Pleace Check Again</string>
     <string name="device_id">Device ID</string>
+    <string name="logout">Do you want to Logout ?</string>
 </resources>

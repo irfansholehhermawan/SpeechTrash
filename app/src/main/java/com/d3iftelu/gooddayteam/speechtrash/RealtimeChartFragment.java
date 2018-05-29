@@ -67,7 +67,7 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         View rootView = inflater.inflate(R.layout.fragment_chart_realtime, container, false);
 
         Intent intent = getActivity().getIntent();
-//        mDeviceName = intent.getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
+        mDeviceName = intent.getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
         mDeviceId = intent.getStringExtra(DetailActivity.ARGS_DEVICE_ID);
 
         mSwitchStatus = rootView.findViewById(R.id.switch_status);

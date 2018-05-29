@@ -153,7 +153,7 @@ public class ReaderActivity extends AppCompatActivity implements ZXingScannerVie
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference();
         myRef.keepSynced(true);
-        myRef.child("list_device").child(mCurrentUser.getUid()).addChildEventListener(new ChildEventListener() {
+        myRef.child("list_device").child("admin").child(mCurrentUser.getUid()).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getKey().equals(deviceID)){

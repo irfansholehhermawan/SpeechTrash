@@ -52,10 +52,11 @@ import java.util.Date;
 public class FinishActivity extends AppCompatActivity implements OnChartGestureListener, OnChartValueSelectedListener, IOnFocusListenable {
 
     private static String TAG = "FinishActivity";
-    private String mDeviceId, mDeviceName, lastKey, admin_id;
+    private String mDeviceId, mDeviceName, admin_id;
     private Switch mSwitchStatus;
     private TextView mTextViewDeviceName;
     private LineChart mChart;
+    private ProcessingHelper processingHelper;
     private BarChart mBarChart;
 
     private final String[] MONTH_ARRAY = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
@@ -66,6 +67,7 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
     private float barWidth = 0.4f;
     private int startMount = 1;
     private int groupCount = 0;
+    private long time;
 
 
     private ArrayList<BarEntry> volumeValueBar = new ArrayList<>();
@@ -91,6 +93,8 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
         mDeviceId = intent.getStringExtra(DetailActivity.ARGS_DEVICE_ID);
         mDeviceName = intent.getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
         setTitle(mDeviceId);
+        processingHelper = new ProcessingHelper();
+        time = processingHelper.getDateNow();
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -98,7 +102,6 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
         mSwitchStatus = findViewById(R.id.switch_status);
         mTextViewDeviceName = findViewById(R.id.text_view_device_name);
         mTextViewDeviceName.setText(mDeviceName);
-        readLastKey();
 
         mValuesVolume = new ArrayList<>();
         mValuesBerat = new ArrayList<>();
@@ -240,37 +243,23 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
 
     private void saveStatusToDatabase(boolean status) {
         if (!status){
+            saveTimeFisnish();
             sendToMessage();
             saveHistoryFull();
         }
         mDatabaseReference.child("device").child(mDeviceId).child("status").setValue(status);
     }
 
-    private void saveHistoryFull() {
-        ProcessingHelper processingHelper = new ProcessingHelper();
-        long time = processingHelper.getDateNow();
-        String mKey = mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").push().getKey();
-        mDatabaseReference.child("device").child(mDeviceId).child("history").child("lastKey").setValue(mKey);
-        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(mKey).child("startDate").setValue(String.valueOf(time));
-        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(mKey).child("finishDate").setValue(String.valueOf(time));
-    }
-
-    private void sendToMessage() {
-        ProcessingHelper processingHelper = new ProcessingHelper();
-        long time = processingHelper.getDateNow();
-        String waktu = Long.toString(time);
-        String pesan = "Tempat Sampah '"+mDeviceName+"' sudah diambil!";
-        Message message = new Message(admin_id, pesan, mCurrentUser.getDisplayName(), waktu);
-        mDatabaseReference.child("device").child(mDeviceId).child("messages").push().setValue(message);
-    }
-
-    private void readLastKey() {
-        mDatabaseReference.child("device").child(mDeviceId).child("tes").child("lastKey").addValueEventListener(new ValueEventListener() {
+    private void saveTimeFisnish() {
+        mDatabaseReference.child("device").child(mDeviceId).child("history").child("lastKey").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                lastKey = dataSnapshot.getValue(String.class);
-//                lastKey = key.toString();
-                Log.i(TAG, "lastKey : "+lastKey);
+                if (dataSnapshot.exists()) {
+                    String lastKey = dataSnapshot.getValue(String.class);
+                    Log.i(TAG, "lastKey : " + lastKey);
+
+                    mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(lastKey).child("finishDate").setValue(String.valueOf(time));
+                }
             }
 
             @Override
@@ -278,6 +267,20 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
 
             }
         });
+    }
+
+    private void saveHistoryFull() {
+        String mKey = mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").push().getKey();
+        mDatabaseReference.child("device").child(mDeviceId).child("history").child("lastKey").setValue(mKey);
+        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(mKey).child("startDate").setValue(String.valueOf(time));
+        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(mKey).child("finishDate").setValue(String.valueOf(time));
+    }
+
+    private void sendToMessage() {
+        String waktu = Long.toString(time);
+        String pesan = "Tempat Sampah '"+mDeviceName+"' sudah diambil!";
+        Message message = new Message(admin_id, pesan, mCurrentUser.getDisplayName(), waktu);
+        mDatabaseReference.child("device").child(mDeviceId).child("messages").push().setValue(message);
     }
 
     private void getBarData(){
@@ -392,7 +395,6 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
         myRef.child("device").child(mDeviceId).child("realtime").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.i(TAG, "Key: " +lastKey);
                 mValuesVolume.clear();
                 int i = 0;
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {

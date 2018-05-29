@@ -167,7 +167,7 @@ public class AdminActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference();
         myRef.keepSynced(true);
-        myRef.child("list_device").child(mCurrentUser.getUid()).addChildEventListener(new ChildEventListener() {
+        myRef.child("list_device").child("admin").child(mCurrentUser.getUid()).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getKey().equals(deviceID)){
@@ -214,7 +214,7 @@ public class AdminActivity extends AppCompatActivity {
 
     private void signOutCheck(){
         AlertDialog.Builder builder = new AlertDialog.Builder(AdminActivity.this);
-        builder.setMessage("Do you want to Logout ?")
+        builder.setMessage(R.string.logout)
                 .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

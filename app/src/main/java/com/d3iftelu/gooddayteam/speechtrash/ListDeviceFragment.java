@@ -87,7 +87,7 @@ public class ListDeviceFragment extends Fragment {
 
         final DatabaseReference myRef = database.getReference();
         myRef.keepSynced(true);
-        myRef.child("list_device").child(mCurrentUser.getUid()).addValueEventListener(new ValueEventListener() {
+        myRef.child("list_device").child("admin").child(mCurrentUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 devicesData.clear();

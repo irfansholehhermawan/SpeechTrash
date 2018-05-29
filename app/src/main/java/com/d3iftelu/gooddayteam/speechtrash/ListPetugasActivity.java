@@ -30,7 +30,7 @@ public class ListPetugasActivity extends AppCompatActivity {
     private PetugasListAdapter petugasAdapter;
     private TextView emptyNotification;
     private ProgressBar loadingData;
-    private String mDeviceId, mDeviceName;
+    private String mDeviceId, mDeviceName, userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +39,7 @@ public class ListPetugasActivity extends AppCompatActivity {
 
         mDeviceId = getIntent().getStringExtra(DetailActivity.ARGS_DEVICE_ID);
         mDeviceName = getIntent().getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
+        userId = getIntent().getStringExtra("user_id");
 
         petugasListView = (ListView) findViewById(R.id.list_view_petugas);
         loadingData = (ProgressBar) findViewById(R.id.item_progres_bar);
@@ -54,6 +55,9 @@ public class ListPetugasActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String uid = realData.get(i).getUser_id();
                 Log.i(TAG, "data UID : "+uid);
+                if (userId != null){
+                    deleteOfficer(userId);
+                }
                 saveToDatabase(uid);
                 Toast.makeText(ListPetugasActivity.this, "Petugas : "+ realData.get(i).getName() + " berhasil ditambahkan pada Tempat Sampah ID : " + mDeviceId + "(" + mDeviceName +")", Toast.LENGTH_LONG).show();
                 Intent gotoListDevice = new Intent(ListPetugasActivity.this, AdminActivity.class);
@@ -62,9 +66,14 @@ public class ListPetugasActivity extends AppCompatActivity {
         });
     }
 
+    private void deleteOfficer(String user_id) {
+        DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mDatabaseReference.child("list_device").child("petugas").child(user_id).child(mDeviceId).removeValue();
+    }
+
     private void saveToDatabase(String uid) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child("list_device").child(uid).child(mDeviceId).setValue(mDeviceName);
+        databaseReference.child("list_device").child("petugas").child(uid).child(mDeviceId).setValue(mDeviceName);
         databaseReference.child("device").child(mDeviceId).child("user_id").setValue(uid);
     }
 

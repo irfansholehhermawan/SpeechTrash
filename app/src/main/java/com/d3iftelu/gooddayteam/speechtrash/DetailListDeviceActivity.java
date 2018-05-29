@@ -1,15 +1,21 @@
 package com.d3iftelu.gooddayteam.speechtrash;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.d3iftelu.gooddayteam.speechtrash.adapter.DeviceListAdapter;
 import com.d3iftelu.gooddayteam.speechtrash.model.Device;
@@ -91,7 +97,7 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
 
         final DatabaseReference myRef = database.getReference();
         myRef.keepSynced(true);
-        myRef.child("list_device").child(mUID).addValueEventListener(new ValueEventListener() {
+        myRef.child("list_device").child("petugas").child(mUID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 devicesData.clear();
@@ -163,20 +169,61 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User history = dataSnapshot.getValue(User.class);
-                latLng = new LatLng(history.getLatitude(), history.getLongitude());
-                if(mMap != null)
-                    setMarker(latLng);
+                if (dataSnapshot.exists()) {
+                    User history = dataSnapshot.getValue(User.class);
+                    latLng = new LatLng(history.getLatitude(), history.getLongitude());
+                    if (mMap != null)
+                        setMarker(latLng);
+                }
             }
 
-            /**
-             *
-             * @param databaseError
-             */
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.listpetugas_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //to add option menu
+        switch (item.getItemId()) {
+            case R.id.action_delete:
+                deleteDevice(mUID);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void deleteDevice(final String uid) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_data_question)
+                .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        deleteData(uid);
+                    }
+                })
+                .setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        builder.create().show();
+    }
+
+    private void deleteData(String uid) {
+        DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mDatabaseReference.child("list_petugas").child(uid).removeValue();
+        mDatabaseReference.child("list_maps").child(uid).removeValue();
+        Toast.makeText(this, "Data Officer Successfully Deleted!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }
