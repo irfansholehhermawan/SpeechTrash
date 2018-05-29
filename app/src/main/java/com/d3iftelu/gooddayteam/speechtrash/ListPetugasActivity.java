@@ -3,6 +3,7 @@ package com.d3iftelu.gooddayteam.speechtrash;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,7 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class ListPetugasActivity extends Activity {
+public class ListPetugasActivity extends AppCompatActivity {
     private static final String TAG = "ListPetugasActivity";
     private ListView petugasListView;
     private PetugasListAdapter petugasAdapter;

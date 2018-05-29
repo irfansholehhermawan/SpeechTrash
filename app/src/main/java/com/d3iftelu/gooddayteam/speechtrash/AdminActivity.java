@@ -203,6 +203,7 @@ public class AdminActivity extends AppCompatActivity {
         Intent intent = new Intent(AdminActivity.this, DetailActivity.class);
         intent.putExtra(DetailActivity.ARGS_DEVICE_ID, deviceID);
         startActivity(intent);
+        finish();
     }
 
     private void goToPlaceActivity(String deviceID) {

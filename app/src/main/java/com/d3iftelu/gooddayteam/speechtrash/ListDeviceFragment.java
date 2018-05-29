@@ -92,40 +92,44 @@ public class ListDeviceFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 devicesData.clear();
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                    String deviceName = userSnapshot.getValue(String.class);
-                    final String deviceId = userSnapshot.getKey();
+                    if (userSnapshot.exists()) {
+                        String deviceName = userSnapshot.getValue(String.class);
+                        final String deviceId = userSnapshot.getKey();
 
-                    final Device device = new Device(deviceName, deviceId);
-                    devicesData.add(device);
+                        final Device device = new Device(deviceName, deviceId);
+                        devicesData.add(device);
 
-                    myRef.child("device").child(deviceId).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            try {
-                                boolean status = dataSnapshot.child("status").getValue(boolean.class);
-                                device.setStatus(status);
+                        myRef.child("device").child(deviceId).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    try {
+                                        boolean status = dataSnapshot.child("status").getValue(boolean.class);
+                                        device.setStatus(status);
 
-                            } catch (NullPointerException e){
-                                myRef.child("device").child(deviceId).child("status").setValue(false);
-                                device.setStatus(false);
-                                myRef.child("device").child(deviceId).child("statusConnect").setValue(false);
-                                device.setStatus(false);
+                                    } catch (NullPointerException e) {
+                                        myRef.child("device").child(deviceId).child("status").setValue(false);
+                                        device.setStatus(false);
+                                        myRef.child("device").child(deviceId).child("statusConnect").setValue(false);
+                                        device.setStatus(false);
 
-                                ProcessingHelper processingHelper = new ProcessingHelper();
-                                long time = processingHelper.getDateNow();
-                                Trash trashMonitoring = new Trash(0,0, String.valueOf(time));
-                                myRef.child("device").child(deviceId).child("monitoring").setValue(trashMonitoring);
-                                myRef.child("device").child(deviceId).child("history").child("start").setValue(String.valueOf(time));
+                                        ProcessingHelper processingHelper = new ProcessingHelper();
+                                        long time = processingHelper.getDateNow();
+                                        Trash trashMonitoring = new Trash(0, 0, String.valueOf(time));
+                                        myRef.child("device").child(deviceId).child("monitoring").setValue(trashMonitoring);
+                                        myRef.child("device").child(deviceId).child("history").child("start").setValue(String.valueOf(time));
+                                    }
+                                    loadingData.setVisibility(View.GONE);
+                                    mAdapter.notifyDataSetChanged();
+                                }
                             }
-                            loadingData.setVisibility(View.GONE);
-                            mAdapter.notifyDataSetChanged();
-                        }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
                 loadingData.setVisibility(View.GONE);
                 mAdapter.notifyDataSetChanged();

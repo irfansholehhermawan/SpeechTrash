@@ -219,9 +219,9 @@ public class HistoryChartFragment extends Fragment implements OnChartValueSelect
 
         } else {
             volume = new BarDataSet(volumeValue, "Volume");
-            volume.setColor(Color.rgb(104, 241, 175));
+            volume.setColor(Color.rgb(249, 156, 147));
             berat = new BarDataSet(beratValue, "Berat");
-            berat.setColor(Color.rgb(164, 228, 251));
+            berat.setColor(Color.rgb(112, 234, 255));
 
             BarData data = new BarData(volume, berat);
             data.setValueFormatter(new LargeValueFormatter());

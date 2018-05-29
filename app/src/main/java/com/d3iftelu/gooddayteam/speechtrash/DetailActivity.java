@@ -1,28 +1,44 @@
 package com.d3iftelu.gooddayteam.speechtrash;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class DetailActivity extends AppCompatActivity {
 
     public static final String ARGS_DEVICE_NAME = "device name";
     public static final String ARGS_DEVICE_ID = "device id";
-    public static final String ARGS_LAST_KEY = "last key";
     private static final String TAG = DetailActivity.class.getSimpleName();
     private String mDeviceId, mDeviceName;
+    private FirebaseUser currentUser;
+    private DatabaseReference mDatabaseReference;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -48,6 +64,11 @@ public class DetailActivity extends AppCompatActivity {
 //        String mDeviceName = intent.getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
         mDeviceId = intent.getStringExtra(DetailActivity.ARGS_DEVICE_ID);
         mDeviceName = intent.getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
+        Log.i(TAG, "mDeviceId: " + mDeviceId);
+        Log.i(TAG, "mDeviceName: " + mDeviceName);
+
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -166,9 +187,99 @@ public class DetailActivity extends AppCompatActivity {
             case R.id.change_petugas:
                 gotoChangePetugas();
                 return true;
+            case R.id.action_edit:
+                editDevice(mDeviceId);
+                return true;
+            case R.id.action_delete:
+                deleteDevice(mDeviceId);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void editDevice(final String idDevice) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        final View viewDialog = inflater.inflate(R.layout.dialog_device_name,null);
+
+        final EditText editTextName = (EditText) viewDialog.findViewById(R.id.edit_text_name);
+
+        mDatabaseReference.child("list_device").child(currentUser.getUid()).child(idDevice).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String nameDeviceText = dataSnapshot.getValue(String.class);
+                editTextName.setText(nameDeviceText);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        final View title = inflater.inflate(R.layout.text_view_customize,null);
+
+        final ImageView icon = (ImageView) title.findViewById(R.id.custom_icon_of_title);
+        final TextView text = (TextView) title.findViewById(R.id.custom_text_of_title);
+
+        icon.setImageResource(R.drawable.ic_info_black_24dp);
+        text.setText("Edit Device");
+        builder.setCustomTitle(title);
+
+        builder.setView(viewDialog)
+                .setPositiveButton(R.string.dialog_submit, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        String deviceName = editTextName.getText().toString().trim();
+                        saveToDatabase(idDevice, deviceName);
+                        Toast.makeText(DetailActivity.this, "Data Successfully Updated!", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void saveToDatabase(String idDevice, String deviceName) {
+        mDatabaseReference.child("list_device").child(currentUser.getUid()).child(idDevice).setValue(deviceName);
+        mDatabaseReference.child("list_maps").child(idDevice).child("name").setValue(deviceName);
+        mDatabaseReference.child("device").child(idDevice).child("deviceName").setValue(deviceName);
+    }
+
+    private void deleteDevice(final String idDevice) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_data_question)
+                .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        deleteData(idDevice);
+                    }
+                })
+                .setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        builder.create().show();
+    }
+
+    private void deleteData(String idDevice) {
+        mDatabaseReference.child("device").child(idDevice).removeValue();
+        mDatabaseReference.child("list_device").child(currentUser.getUid()).child(idDevice).removeValue();
+        mDatabaseReference.child("list_maps").child(idDevice).removeValue();
+        Toast.makeText(this, "Data Successfully Deleted!", Toast.LENGTH_SHORT).show();
+        finish();
+        goToAdminActivity();
+    }
+
+    private void goToAdminActivity() {
+        Intent goAdmin = new Intent(this, AdminActivity.class);
+        startActivity(goAdmin);
     }
 
     private void gotoChangePetugas() {

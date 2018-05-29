@@ -49,7 +49,7 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
     private TextView mTextViewTime;
     private LineChart mChart;
 
-    private String mDeviceName, mDeviceId, user_id, mKey;
+    private String mDeviceName, mDeviceId, user_id;
 
     FirebaseDatabase mFirebaseDatabase;
     DatabaseReference mDatabaseReference;
@@ -67,7 +67,7 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         View rootView = inflater.inflate(R.layout.fragment_chart_realtime, container, false);
 
         Intent intent = getActivity().getIntent();
-        mDeviceName = intent.getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
+//        mDeviceName = intent.getStringExtra(DetailActivity.ARGS_DEVICE_NAME);
         mDeviceId = intent.getStringExtra(DetailActivity.ARGS_DEVICE_ID);
 
         mSwitchStatus = rootView.findViewById(R.id.switch_status);
@@ -75,7 +75,6 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         mTextViewTime = rootView.findViewById(R.id.time_speechtrash);
         mTextViewVolume = rootView.findViewById(R.id.volume_speechtrash);
         mTextViewBerat = rootView.findViewById(R.id.berat_speechtrash);
-        mTextViewDeviceName.setText(mDeviceName);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseDatabase.getReference();
@@ -120,7 +119,7 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         leftAxis.setDrawLimitLinesBehindData(true);
 
         mChart.getAxisRight().setEnabled(false);
-        readBerat();
+        readVolume();
 
         mChart.animateX(2500);
         Legend l = mChart.getLegend();
@@ -136,10 +135,12 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         mDatabaseReference.child("device").child(mDeviceId).child("monitoring").child("time").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String time = dataSnapshot.getValue(String.class);
-                long waktu = Long.parseLong(time);
-                ProcessingHelper processingHelper = new ProcessingHelper();
-                mTextViewTime.setText(processingHelper.changeUnixTimeStampToStringDate(waktu));
+                if (dataSnapshot.exists()) {
+                    String time = dataSnapshot.getValue(String.class);
+                    long waktu = Long.parseLong(time);
+                    ProcessingHelper processingHelper = new ProcessingHelper();
+                    mTextViewTime.setText(processingHelper.changeUnixTimeStampToStringDate(waktu));
+                }
             }
 
             @Override
@@ -150,8 +151,10 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         mDatabaseReference.child("device").child(mDeviceId).child("monitoring").child("volume").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                long volume = dataSnapshot.getValue(long.class);
-                mTextViewVolume.setText(Long.toString(volume));
+                if (dataSnapshot.exists()) {
+                    long volume = dataSnapshot.getValue(long.class);
+                    mTextViewVolume.setText(Long.toString(volume));
+                }
             }
 
             @Override
@@ -162,8 +165,25 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         mDatabaseReference.child("device").child(mDeviceId).child("monitoring").child("berat").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                float berat = dataSnapshot.getValue(float.class);
-                mTextViewBerat.setText(Float.toString(berat));
+                if (dataSnapshot.exists()) {
+                    float berat = dataSnapshot.getValue(float.class);
+                    mTextViewBerat.setText(Float.toString(berat));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        mDatabaseReference.child("device").child(mDeviceId).child("deviceName").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String deviceName = dataSnapshot.getValue(String.class);
+                    mTextViewDeviceName.setText(deviceName);
+                    Log.i(TAG, "deviceName : " + deviceName);
+                }
             }
 
             @Override
@@ -177,14 +197,16 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         mDatabaseReference.child("device").child(mDeviceId).child("status").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean status = dataSnapshot.getValue(Boolean.class);
-                mSwitchStatus.setChecked(status);
-                mSwitchStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean isStatus) {
-                        saveStatusToDatabase(isStatus);
-                    }
-                });
+                if (dataSnapshot.exists()) {
+                    boolean status = dataSnapshot.getValue(Boolean.class);
+                    mSwitchStatus.setChecked(status);
+                    mSwitchStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean isStatus) {
+                            saveStatusToDatabase(isStatus);
+                        }
+                    });
+                }
             }
 
             @Override
@@ -195,8 +217,10 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         mDatabaseReference.child("device").child(mDeviceId).child("user_id").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                user_id = dataSnapshot.getValue(String.class);
-                Log.i(TAG, "userID : " + user_id);
+                if (dataSnapshot.exists()) {
+                    user_id = dataSnapshot.getValue(String.class);
+                    Log.i(TAG, "userID : " + user_id);
+                }
             }
 
             @Override
@@ -238,13 +262,15 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
                 mValuesVolume.clear();
                 int i = 0;
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                    int data = userSnapshot.child("volume").getValue(Integer.class);
-                    Log.i(TAG, "onDataChange: " + data);
-                    final Entry entry = new Entry(i, data);
-                    mValuesVolume.add(entry);
-                    i++;
+                    if (userSnapshot.exists()) {
+                        int data = userSnapshot.child("volume").getValue(Integer.class);
+                        Log.i(TAG, "onDataChange: " + data);
+                        final Entry entry = new Entry(i, data);
+                        mValuesVolume.add(entry);
+                        i++;
+                    }
                 }
-                setData();
+                readBerat();
             }
 
             @Override
@@ -268,17 +294,15 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
                 mValuesBerat.clear();
                 int i = 0;
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                    try {
+                    if (userSnapshot.exists()) {
                         int data = userSnapshot.child("berat").getValue(Integer.class);
                         Log.i(TAG, "onDataChange: " + data);
                         final Entry entry = new Entry(i, data);
                         mValuesBerat.add(entry);
                         i++;
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
                     }
                 }
-                readVolume();
+                setData();
             }
 
             @Override

@@ -264,6 +264,7 @@ public class PlaceActivity extends Activity implements OnMapReadyCallback {
         databaseReference.child("list_maps").child(idDevice).child("name").setValue(deviceName);
         databaseReference.child("list_maps").child(idDevice).child("imageUrl").setValue(icon);
         databaseReference.child("device").child(idDevice).child("admin_id").setValue(curentUser.getUid());
+        databaseReference.child("device").child(idDevice).child("deviceName").setValue(deviceName);
         finish();
 
 //        databaseReference.child("device").child(idDevice).child("prediksi").child(mKey).child("volume").setValue(0);

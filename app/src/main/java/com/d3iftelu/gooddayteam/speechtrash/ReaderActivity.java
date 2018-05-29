@@ -189,6 +189,7 @@ public class ReaderActivity extends AppCompatActivity implements ZXingScannerVie
         Intent intent = new Intent(ReaderActivity.this, DetailActivity.class);
         intent.putExtra(DetailActivity.ARGS_DEVICE_ID, deviceID);
         startActivity(intent);
+        finish();
     }
 
     private void goToPlaceActivity(String idDevice) {
