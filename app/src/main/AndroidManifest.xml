@@ -62,7 +62,8 @@
         </service>
 
         <activity android:name=".DetailListDeviceActivity" />
-        <activity android:name=".DetailChatActivity"></activity>
+        <activity android:name=".DetailChatActivity" />
+        <activity android:name=".HistoryPrediksiActivity"></activity>
     </application>
 
 </manifest>

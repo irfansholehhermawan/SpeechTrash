@@ -1,124 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorBackground"
     android:padding="16dp"
     tools:context=".PredictionFragment">
 
-    <android.support.v7.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="4dp">
-        <RelativeLayout
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="240dp"
+            android:layout_marginTop="4dp"
+            app:cardCornerRadius="4dp">
+
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/line_chart"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="16dp">
+
             </com.github.mikephil.charting.charts.LineChart>
-        </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+            <ImageButton
+                android:id="@+id/button_history_prediction"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="8dp"
+                android:onClick="gotoHistoryPrediction"
+                android:src="@drawable/ic_show_chart_black_24dp"
+                android:layout_gravity="bottom|right"
+                tools:ignore="OnClick" />
+        </android.support.v7.widget.CardView>
 
-    <android.support.v7.widget.CardView
-        android:layout_marginTop="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
+        <android.support.v7.widget.CardView
+            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:padding="16dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Date Start "/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Prediction is Full"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Date Now"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Date Finish "/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="0"
-                android:paddingTop="16dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=":"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=":"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=":"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=":"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="0"
-                android:padding="16dp">
-                <TextView
-                    android:id="@+id/time_start"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="28 Mei 2018"/>
+                android:orientation="horizontal">
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:padding="16dp">
                     <TextView
-                        android:id="@+id/time_prediction"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0"/>
+                        android:text="Date Start "/>
                     <TextView
-                        android:id="@+id/text_day"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=" Day"/>
+                        android:text="Prediction is Full"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Date Now"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Date Finish "/>
                 </LinearLayout>
-                <TextView
-                    android:id="@+id/time_now"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="29 Mei 2018"/>
-                <TextView
-                    android:id="@+id/time_finish"
+                    android:orientation="vertical"
+                    android:layout_weight="0"
+                    android:paddingTop="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=":"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=":"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=":"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=":"/>
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="31 Mei 2018"/>
+                    android:orientation="vertical"
+                    android:layout_weight="0"
+                    android:padding="16dp">
+                    <TextView
+                        android:id="@+id/time_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="28 Mei 2018"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:id="@+id/time_prediction"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"/>
+                        <TextView
+                            android:id="@+id/text_day"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" Day"/>
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/time_now"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="29 Mei 2018"/>
+                    <TextView
+                        android:id="@+id/time_finish"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="31 Mei 2018"/>
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-
-    </android.support.v7.widget.CardView>
-
-</LinearLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+</ScrollView>

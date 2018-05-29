@@ -11,12 +11,16 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.d3iftelu.gooddayteam.speechtrash.adapter.PredictionListAdapter;
 import com.d3iftelu.gooddayteam.speechtrash.chart.MyMarkerView;
 import com.d3iftelu.gooddayteam.speechtrash.interface_fragment.IOnFocusListenable;
 import com.d3iftelu.gooddayteam.speechtrash.model.History;
+import com.d3iftelu.gooddayteam.speechtrash.model.Prediction;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
@@ -30,17 +34,15 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-
-import static android.content.ContentValues.TAG;
 
 
 /**
@@ -55,9 +57,9 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
     private TextView mTextViewWaktuFinish;
     private TextView mTextViewWaktuNow;
     private TextView mTextViewWaktuPrediction;
+    private ImageButton button;
     public ArrayList<History> historyFull = new ArrayList<>();
 
-    FirebaseDatabase mFirebaseDatabase;
     DatabaseReference mDatabaseReference;
 
     ArrayList<Entry> mValuesVolume;
@@ -84,9 +86,16 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
         mTextViewWaktuFinish = (TextView) rootView.findViewById(R.id.time_finish);
         mTextViewWaktuNow = (TextView) rootView.findViewById(R.id.time_now);
         mTextViewWaktuPrediction = (TextView) rootView.findViewById(R.id.time_prediction);
+        button = (ImageButton) rootView.findViewById(R.id.button_history_prediction);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gotoHistoryPrediction();
+            }
+        });
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mDatabaseReference = mFirebaseDatabase.getReference();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
         mValuesVolume = new ArrayList<>();
         mValuesPrediction = new ArrayList<>();
 
@@ -139,12 +148,16 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
         return rootView;
     }
 
+    private void gotoHistoryPrediction(){
+        Intent button = new Intent(getContext(), HistoryPrediksiActivity.class);
+        button.putExtra(DetailActivity.ARGS_DEVICE_ID, mDeviceId);
+        startActivity(button);
+    }
+
     private void dataPrediction() {
         final int[] averagePrediction = new int[1];
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference();
-        myRef.keepSynced(true);
-        myRef.child("device").child(mDeviceId).child("history").child("full").addValueEventListener(new ValueEventListener() {
+        mDatabaseReference.keepSynced(true);
+        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int i = 0;
@@ -244,6 +257,7 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
 
                     }
                 });
+                mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(lastKey).child("prediksi").setValue(averagePrediction[0]);
             }
 
             @Override
@@ -285,10 +299,8 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
     }
 
     private void readDataVolume(String lastKey) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference();
-        myRef.keepSynced(true);
-        myRef.child("device").child(mDeviceId).child("prediksi").child(lastKey).addValueEventListener(new ValueEventListener() {
+        mDatabaseReference.keepSynced(true);
+        mDatabaseReference.child("device").child(mDeviceId).child("prediksi").child(lastKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mValuesVolume.clear();
@@ -315,11 +327,8 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
     }
 
     private void readDataPrediction(final String lastKey) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference();
-        myRef.keepSynced(true);
-
-        myRef.child("device").child(mDeviceId).child("prediksi").child(lastKey).addValueEventListener(new ValueEventListener() {
+        mDatabaseReference.keepSynced(true);
+        mDatabaseReference.child("device").child(mDeviceId).child("prediksi").child(lastKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mValuesPrediction.clear();

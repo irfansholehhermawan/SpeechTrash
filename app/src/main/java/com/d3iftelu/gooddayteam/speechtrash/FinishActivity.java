@@ -16,6 +16,7 @@ import com.d3iftelu.gooddayteam.speechtrash.chart.MyMarkerChartView;
 import com.d3iftelu.gooddayteam.speechtrash.chart.MyMarkerView;
 import com.d3iftelu.gooddayteam.speechtrash.interface_fragment.IOnFocusListenable;
 import com.d3iftelu.gooddayteam.speechtrash.model.Message;
+import com.d3iftelu.gooddayteam.speechtrash.model.Prediction;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -270,10 +271,11 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
     }
 
     private void saveHistoryFull() {
+        String date = String.valueOf(time);
+        Prediction prediction = new Prediction(date,date);
         String mKey = mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").push().getKey();
         mDatabaseReference.child("device").child(mDeviceId).child("history").child("lastKey").setValue(mKey);
-        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(mKey).child("startDate").setValue(String.valueOf(time));
-        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(mKey).child("finishDate").setValue(String.valueOf(time));
+        mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(mKey).setValue(prediction);
     }
 
     private void sendToMessage() {
