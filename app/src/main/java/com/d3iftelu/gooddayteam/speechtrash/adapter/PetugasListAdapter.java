@@ -1,8 +1,10 @@
 package com.d3iftelu.gooddayteam.speechtrash.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,8 @@ import com.d3iftelu.gooddayteam.speechtrash.R;
 import com.d3iftelu.gooddayteam.speechtrash.model.User;
 
 import java.util.ArrayList;
+
+import static android.support.constraint.Constraints.TAG;
 
 /**
  * Created by Sholeh Hermawan on 21/04/2018.
@@ -44,6 +48,17 @@ public class PetugasListAdapter  extends ArrayAdapter<User> {
         GPSTracker gpsTracker = new GPSTracker(context);
         String locationName = gpsTracker.getLocationName(current.getLatitude(), current.getLongitude());
         location.setText(locationName);
+
+        TextView status = (TextView) view.findViewById(R.id.status);
+        boolean validasi = current.isValidasi();
+        Log.i(TAG, "validasi: "+validasi);
+        if (validasi) {
+            status.setText("VALID");
+            status.setBackgroundColor(0xFF8CC63E);
+        } else {
+            status.setText("INVALID");
+            status.setBackgroundColor(0xFF008DB3);
+        }
 
         return view;
     }

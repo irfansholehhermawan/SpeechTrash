@@ -34,6 +34,7 @@ public class User {
         this.latitude = user.getLatitude();
         this.longitude = user.getLongitude();
         this.token = user.getToken();
+        this.validasi =user.isValidasi();
         this.idUSer = idUser;
     }
 

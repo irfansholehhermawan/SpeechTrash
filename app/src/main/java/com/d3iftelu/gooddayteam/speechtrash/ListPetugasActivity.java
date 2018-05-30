@@ -89,8 +89,12 @@ public class ListPetugasActivity extends AppCompatActivity {
                 currentPetugas.clear();
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     final User data = postSnapshot.getValue(User.class);
-                    final User dataId = new User(data, postSnapshot.getKey());
-                    currentPetugas.add(dataId);
+                    boolean cek = data.isValidasi();
+                    if (cek){
+                        final User dataValid = postSnapshot.getValue(User.class);
+                        final User dataId = new User(dataValid, postSnapshot.getKey());
+                        currentPetugas.add(dataId);
+                    }
                 }
                 petugasAdapter.notifyDataSetChanged();
                 loadingData.setVisibility(View.GONE);

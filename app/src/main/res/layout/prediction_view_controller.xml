@@ -12,6 +12,47 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="0">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:text="Start Date :"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:text="Finish Date :"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/prediction_date_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="4dp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:text="24 April 2018 12:45"/>
+                <TextView
+                    android:id="@+id/prediction_date_finish"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="4dp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:text="30 April 2018 08:00"/>
+            </LinearLayout>
+
             <RelativeLayout
                 android:layout_width="54dp"
                 android:layout_height="54dp"
@@ -39,43 +80,6 @@
                         android:textStyle="bold"/>
                 </LinearLayout>
             </RelativeLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_marginLeft="8dp"
-                android:layout_weight="0">
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_alarm_add_black_24dp"/>
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_alarm_on_black_24dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1">
-                <TextView
-                    android:id="@+id/prediction_date_start"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="4dp"
-                    android:text="24 April 2018 12:45"/>
-                <TextView
-                    android:id="@+id/prediction_date_finish"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="4dp"
-                    android:text="30 April 2018 08:00"/>
-            </LinearLayout>
 
         </LinearLayout>
     </RelativeLayout>

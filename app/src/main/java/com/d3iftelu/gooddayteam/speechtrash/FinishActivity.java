@@ -215,6 +215,9 @@ public class FinishActivity extends AppCompatActivity implements OnChartGestureL
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean status = dataSnapshot.getValue(Boolean.class);
                 mSwitchStatus.setChecked(status);
+                if (!status) {
+                    mSwitchStatus.setClickable(false);
+                }
                 mSwitchStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean isStatus) {

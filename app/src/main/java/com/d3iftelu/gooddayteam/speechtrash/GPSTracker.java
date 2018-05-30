@@ -205,22 +205,21 @@ public class GPSTracker extends Service implements LocationListener {
             User user = new User(curentUser.getUid(), name , url, myPosition.latitude, myPosition.longitude, prefManager.getToken(), true);
             databaseReference.child("admin").child(curentUser.getUid()).setValue(user);
         } else {
-            databaseReference.child("admin").child("petugas").child(curentUser.getUid()).setValue(false);
-            databaseReference.child("admin").child("petugas").addValueEventListener(new ValueEventListener() {
+            databaseReference.child("admin").child("petugas").child(curentUser.getUid()).child("validasi").setValue(false);
+            databaseReference.child("admin").child("petugas").child(curentUser.getUid()).child("validasi").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()){
-                        String uid = dataSnapshot.getKey();
+                    if (dataSnapshot.exists()) {
                         boolean validasi = dataSnapshot.getValue(Boolean.class);
-                        Log.i(TAG, "Officer : " + uid + " status is " + validasi);
-                        if (uid.equals(curentUser.getUid()) && validasi){
+                        if (!validasi){
+                            User user = new User(curentUser.getUid(), curentUser.getDisplayName() , String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, prefManager.getToken(), false);
+                            databaseReference.child("list_petugas").child(curentUser.getUid()).setValue(user);
+                        } else {
                             MarkerData marker = new MarkerData(String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, curentUser.getDisplayName());
                             databaseReference.child("list_maps").child(curentUser.getUid()).setValue(marker);
-                        } else {
-                            Log.i(TAG, "Validasi Officer '" + curentUser.getDisplayName() +"' belum divalidasi!");
+                            User user = new User(curentUser.getUid(), curentUser.getDisplayName() , String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, prefManager.getToken(), true);
+                            databaseReference.child("list_petugas").child(curentUser.getUid()).setValue(user);
                         }
-                        User user = new User(curentUser.getUid(), curentUser.getDisplayName() , String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, prefManager.getToken(), validasi);
-                        databaseReference.child("list_petugas").child(curentUser.getUid()).setValue(user);
                     }
                 }
 
@@ -230,7 +229,6 @@ public class GPSTracker extends Service implements LocationListener {
                 }
             });
         }
-
     }
 
     public String getLocationName(double latitude, double longitude){

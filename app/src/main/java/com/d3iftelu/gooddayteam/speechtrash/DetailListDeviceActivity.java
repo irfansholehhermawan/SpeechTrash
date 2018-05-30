@@ -1,6 +1,5 @@
 package com.d3iftelu.gooddayteam.speechtrash;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -29,8 +28,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,7 +42,7 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
     public static final String ARGS_NAME = "petugas_name";
     private DatabaseReference myRef;
     private Switch mSwitchStatus;
-    private TextView mTextViewDeviceName;
+    private TextView mTextViewOfficerName;
     private ListView mListViewDevice;
     private TextView mTextViewDataIsEmpty;
     private ProgressBar loadingData;
@@ -62,13 +59,14 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
         Intent intent = getIntent();
         mUID = intent.getStringExtra(DetailListDeviceActivity.ARGS_UID);
         mName = intent.getStringExtra(DetailListDeviceActivity.ARGS_NAME);
+        Log.i(TAG, "CEK: "+ mUID + " : " + mName);
         myRef = FirebaseDatabase.getInstance().getReference();
 
         if (mUID != null) {
             readData(mUID);
         }
         mSwitchStatus = findViewById(R.id.switch_status);
-        mTextViewDeviceName = findViewById(R.id.text_view_device_name);
+        mTextViewOfficerName = findViewById(R.id.text_name_officer);
         mListViewDevice = findViewById(R.id.list_view_device);
         mTextViewDataIsEmpty = findViewById(R.id.text_view_empty_view);
         loadingData = (ProgressBar) findViewById(R.id.item_progres_bar);
@@ -99,7 +97,7 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
     }
 
     private void readValidasi() {
-        myRef.child("admin").child("petugas").child(mUID).addValueEventListener(new ValueEventListener() {
+        myRef.child("admin").child("petugas").child(mUID).child("validasi").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -119,11 +117,16 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
 
             }
         });
-        mTextViewDeviceName.setText(mName);
+        mTextViewOfficerName.setText(mName);
     }
 
     private void saveStatusToDatabase(boolean status) {
-        myRef.child("admin").child("petugas").child(mUID).setValue(status);
+        if (status){
+            myRef.child("admin").child("petugas").child(mUID).child("validasi").setValue(status);
+        } else {
+            myRef.child("admin").child("petugas").child(mUID).child("validasi").setValue(status);
+            myRef.child("list_maps").child(mUID).removeValue();
+        }
     }
 
     private ArrayList<Device> readDeviceData() {
