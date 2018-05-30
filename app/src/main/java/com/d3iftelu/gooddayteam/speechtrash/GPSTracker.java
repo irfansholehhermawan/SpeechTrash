@@ -20,8 +20,11 @@ import com.d3iftelu.gooddayteam.speechtrash.model.User;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.List;
@@ -192,20 +195,40 @@ public class GPSTracker extends Service implements LocationListener {
         return null;
     }
 
-    public void writeLatLngToDatabase(LatLng myPosition){
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        PrefManager prefManager = new PrefManager(mContext);
+    public void writeLatLngToDatabase(final LatLng myPosition){
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        final PrefManager prefManager = new PrefManager(mContext);
         String email = curentUser.getEmail();
         if (email.contains("@admin")){
             String name = curentUser.getEmail();
             String url = "https://firebasestorage.googleapis.com/v0/b/paspeechtrash.appspot.com/o/icon%2Fadmin.png?alt=media&token=c0be8582-2a21-4425-ac28-88809f866379";
-            User user = new User(curentUser.getUid(), name , url, myPosition.latitude, myPosition.longitude, prefManager.getToken());
+            User user = new User(curentUser.getUid(), name , url, myPosition.latitude, myPosition.longitude, prefManager.getToken(), true);
             databaseReference.child("admin").child(curentUser.getUid()).setValue(user);
         } else {
-            User user = new User(curentUser.getUid(), curentUser.getDisplayName() , String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, prefManager.getToken());
-            databaseReference.child("list_petugas").child(curentUser.getUid()).setValue(user);
-            MarkerData marker = new MarkerData(String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, curentUser.getDisplayName());
-            databaseReference.child("list_maps").child(curentUser.getUid()).setValue(marker);
+            databaseReference.child("admin").child("petugas").child(curentUser.getUid()).setValue(false);
+            databaseReference.child("admin").child("petugas").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()){
+                        String uid = dataSnapshot.getKey();
+                        boolean validasi = dataSnapshot.getValue(Boolean.class);
+                        Log.i(TAG, "Officer : " + uid + " status is " + validasi);
+                        if (uid.equals(curentUser.getUid()) && validasi){
+                            MarkerData marker = new MarkerData(String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, curentUser.getDisplayName());
+                            databaseReference.child("list_maps").child(curentUser.getUid()).setValue(marker);
+                        } else {
+                            Log.i(TAG, "Validasi Officer '" + curentUser.getDisplayName() +"' belum divalidasi!");
+                        }
+                        User user = new User(curentUser.getUid(), curentUser.getDisplayName() , String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, prefManager.getToken(), validasi);
+                        databaseReference.child("list_petugas").child(curentUser.getUid()).setValue(user);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
 
     }

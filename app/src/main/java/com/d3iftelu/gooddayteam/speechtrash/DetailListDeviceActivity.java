@@ -12,8 +12,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +43,9 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
     private static final String TAG = "DetailPetugasActivity";
     public static final String ARGS_UID = "petugas_uid";
     public static final String ARGS_NAME = "petugas_name";
+    private DatabaseReference myRef;
+    private Switch mSwitchStatus;
+    private TextView mTextViewDeviceName;
     private ListView mListViewDevice;
     private TextView mTextViewDataIsEmpty;
     private ProgressBar loadingData;
@@ -57,11 +62,13 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
         Intent intent = getIntent();
         mUID = intent.getStringExtra(DetailListDeviceActivity.ARGS_UID);
         mName = intent.getStringExtra(DetailListDeviceActivity.ARGS_NAME);
+        myRef = FirebaseDatabase.getInstance().getReference();
 
         if (mUID != null) {
             readData(mUID);
         }
-
+        mSwitchStatus = findViewById(R.id.switch_status);
+        mTextViewDeviceName = findViewById(R.id.text_view_device_name);
         mListViewDevice = findViewById(R.id.list_view_device);
         mTextViewDataIsEmpty = findViewById(R.id.text_view_empty_view);
         loadingData = (ProgressBar) findViewById(R.id.item_progres_bar);
@@ -72,6 +79,7 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
         mListViewDevice.setAdapter(mAdapter);
         mListViewDevice.setEmptyView(mTextViewDataIsEmpty);
         setTitle(mName);
+        readValidasi();
 
         mListViewDevice.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -90,12 +98,37 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
         mapView.getMapAsync(this);
     }
 
+    private void readValidasi() {
+        myRef.child("admin").child("petugas").child(mUID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    boolean status = dataSnapshot.getValue(Boolean.class);
+                    mSwitchStatus.setChecked(status);
+                    mSwitchStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean isStatus) {
+                            saveStatusToDatabase(isStatus);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        mTextViewDeviceName.setText(mName);
+    }
+
+    private void saveStatusToDatabase(boolean status) {
+        myRef.child("admin").child("petugas").child(mUID).setValue(status);
+    }
+
     private ArrayList<Device> readDeviceData() {
         final ArrayList<Device> devicesData = new ArrayList<>();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
         loadingData.setVisibility(View.VISIBLE);
-
-        final DatabaseReference myRef = database.getReference();
         myRef.keepSynced(true);
         myRef.child("list_device").child("petugas").child(mUID).addValueEventListener(new ValueEventListener() {
             @Override
@@ -165,8 +198,7 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
     }
 
     private void readData(String mUID){
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("list_petugas").child(mUID);
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        myRef.child("list_petugas").child(mUID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -220,9 +252,8 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
     }
 
     private void deleteData(String uid) {
-        DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mDatabaseReference.child("list_petugas").child(uid).removeValue();
-        mDatabaseReference.child("list_maps").child(uid).removeValue();
+        myRef.child("list_petugas").child(uid).removeValue();
+        myRef.child("list_maps").child(uid).removeValue();
         Toast.makeText(this, "Data Officer Successfully Deleted!", Toast.LENGTH_SHORT).show();
         finish();
     }

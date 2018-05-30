@@ -11,18 +11,20 @@ public class User {
     private double latitude;
     private double longitude;
     private String token;
+    private boolean validasi;
     private String idUSer;
 
     public User() {
     }
 
-    public User(String user_id, String name, String photoUrl, double latitude, double longitude, String token) {
+    public User(String user_id, String name, String photoUrl, double latitude, double longitude, String token, boolean validasi) {
         this.user_id = user_id;
         this.name = name;
         this.photoUrl = photoUrl;
         this.latitude = latitude;
         this.longitude = longitude;
         this.token = token;
+        this.validasi = validasi;
     }
 
     public User(User user, String idUser) {
@@ -61,5 +63,9 @@ public class User {
 
     public String getToken() {
         return token;
+    }
+
+    public boolean isValidasi() {
+        return validasi;
     }
 }

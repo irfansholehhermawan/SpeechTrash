@@ -25,17 +25,35 @@
                 android:layout_margin="16dp">
 
             </com.github.mikephil.charting.charts.LineChart>
+        </android.support.v7.widget.CardView>
 
-            <ImageButton
-                android:id="@+id/button_history_prediction"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginRight="8dp"
-                android:onClick="gotoHistoryPrediction"
-                android:src="@drawable/ic_show_chart_black_24dp"
-                android:layout_gravity="bottom|right"
-                tools:ignore="OnClick" />
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="16dp"
+                    android:text="Show List History Prediction"/>
+                <ImageButton
+                    android:id="@+id/button_history_prediction"
+                    android:layout_weight="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:onClick="gotoHistoryPrediction"
+                    android:src="@drawable/ic_show_chart_black_24dp"
+                    android:layout_gravity="center_vertical"
+                    tools:ignore="OnClick" />
+            </LinearLayout>
+
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -130,5 +148,6 @@
                 </LinearLayout>
             </LinearLayout>
         </android.support.v7.widget.CardView>
+
     </LinearLayout>
 </ScrollView>
