@@ -205,19 +205,22 @@ public class GPSTracker extends Service implements LocationListener {
             User user = new User(curentUser.getUid(), name , url, myPosition.latitude, myPosition.longitude, prefManager.getToken(), true);
             databaseReference.child("admin").child(curentUser.getUid()).setValue(user);
         } else {
-            databaseReference.child("admin").child("petugas").child(curentUser.getUid()).child("validasi").setValue(false);
             databaseReference.child("admin").child("petugas").child(curentUser.getUid()).child("validasi").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
+                    Log.i(TAG, "dataSnapshot: "+dataSnapshot.getValue());
+                    if (dataSnapshot.getValue() == null) {
+                        databaseReference.child("admin").child("petugas").child(curentUser.getUid()).child("validasi").setValue(false);
+                    } else {
                         boolean validasi = dataSnapshot.getValue(Boolean.class);
-                        if (!validasi){
-                            User user = new User(curentUser.getUid(), curentUser.getDisplayName() , String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, prefManager.getToken(), false);
+                        Log.i(TAG, "validasi: " + validasi);
+                        if (!validasi) {
+                            User user = new User(curentUser.getUid(), curentUser.getDisplayName(), String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, prefManager.getToken(), false);
                             databaseReference.child("list_petugas").child(curentUser.getUid()).setValue(user);
                         } else {
                             MarkerData marker = new MarkerData(String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, curentUser.getDisplayName());
                             databaseReference.child("list_maps").child(curentUser.getUid()).setValue(marker);
-                            User user = new User(curentUser.getUid(), curentUser.getDisplayName() , String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, prefManager.getToken(), true);
+                            User user = new User(curentUser.getUid(), curentUser.getDisplayName(), String.valueOf(curentUser.getPhotoUrl()), myPosition.latitude, myPosition.longitude, prefManager.getToken(), true);
                             databaseReference.child("list_petugas").child(curentUser.getUid()).setValue(user);
                         }
                     }
