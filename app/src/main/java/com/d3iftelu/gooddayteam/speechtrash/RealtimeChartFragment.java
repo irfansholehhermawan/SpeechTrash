@@ -119,7 +119,6 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         leftAxis.setDrawLimitLinesBehindData(true);
 
         mChart.getAxisRight().setEnabled(false);
-        readVolume();
 
         mChart.animateX(2500);
         Legend l = mChart.getLegend();
@@ -191,6 +190,18 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
 
             }
         });
+        mDatabaseReference.child("device").child(mDeviceId).child("history").child("lastKey").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final String lastKey = dataSnapshot.getValue(String.class);
+                readVolume(lastKey);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void readStatus() {
@@ -251,12 +262,12 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
 //        super.onWindowFocusChanged(hasFocus);
     }
 
-    private void readVolume() {
+    private void readVolume(final String lastKey) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         final DatabaseReference myRef = database.getReference();
         myRef.keepSynced(true);
-        myRef.child("device").child(mDeviceId).child("realtime").addValueEventListener(new ValueEventListener() {
+        myRef.child("device").child(mDeviceId).child("realtime").child(lastKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mValuesVolume.clear();
@@ -270,7 +281,7 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
                         i++;
                     }
                 }
-                readBerat();
+                readBerat(lastKey);
             }
 
             @Override
@@ -282,13 +293,13 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         });
     }
 
-    private void readBerat() {
+    private void readBerat(String lastKey) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         final DatabaseReference myRef = database.getReference();
         myRef.keepSynced(true);
 
-        myRef.child("device").child(mDeviceId).child("realtime").addValueEventListener(new ValueEventListener() {
+        myRef.child("device").child(mDeviceId).child("realtime").child(lastKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mValuesBerat.clear();
