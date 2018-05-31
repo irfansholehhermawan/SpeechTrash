@@ -199,11 +199,6 @@ public class DetailActivity extends AppCompatActivity {
 
     private void showDialogPetugas() {
         final String[] userId = new String[1];
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = getLayoutInflater();
-        final View viewDialog = inflater.inflate(R.layout.change_petugas_view_controller,null);
-
-        final TextView textViewName = (TextView) viewDialog.findViewById(R.id.name_petugas);
 
         mDatabaseReference.child("device").child(mDeviceId).child("user_id").addValueEventListener(new ValueEventListener() {
             @Override
@@ -216,7 +211,38 @@ public class DetailActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 String namePetugas = dataSnapshot.getValue(String.class);
+
+                                final AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
+                                LayoutInflater inflater = getLayoutInflater();
+                                final View viewDialog = inflater.inflate(R.layout.change_petugas_view_controller,null);
+
+                                final TextView textViewName = (TextView) viewDialog.findViewById(R.id.name_petugas);
+                                final View title = inflater.inflate(R.layout.text_view_customize,null);
+
+                                final ImageView icon = (ImageView) title.findViewById(R.id.custom_icon_of_title);
+                                final TextView text = (TextView) title.findViewById(R.id.custom_text_of_title);
+
+                                icon.setImageResource(R.drawable.ic_info_black_24dp);
+                                builder.setCustomTitle(title);
+                                text.setText("Change Officer");
+
                                 textViewName.setText(namePetugas);
+
+                                builder.setView(viewDialog)
+                                        .setPositiveButton(R.string.dialog_change, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                gotoChangePetugas(userId[0]);
+                                            }
+                                        })
+                                        .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.cancel();
+                                            }
+                                        });
+
+                                final AlertDialog dialog = builder.create();
+                                dialog.show();
                             }
 
                             @Override
@@ -224,9 +250,39 @@ public class DetailActivity extends AppCompatActivity {
 
                             }
                         });
-                    } else {
-                        textViewName.setText("No Data Officers!");
                     }
+                } else {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
+                    LayoutInflater inflater = getLayoutInflater();
+                    final View viewDialog = inflater.inflate(R.layout.change_petugas_view_controller,null);
+
+                    final TextView textViewName = (TextView) viewDialog.findViewById(R.id.name_petugas);
+                    final View title = inflater.inflate(R.layout.text_view_customize,null);
+
+                    final ImageView icon = (ImageView) title.findViewById(R.id.custom_icon_of_title);
+                    final TextView text = (TextView) title.findViewById(R.id.custom_text_of_title);
+
+                    icon.setImageResource(R.drawable.ic_info_black_24dp);
+                    builder.setCustomTitle(title);
+                    text.setText("Add Officer");
+
+                    textViewName.setText("No Data Officers!");
+
+                    builder.setView(viewDialog)
+                            .setPositiveButton(R.string.dialog_add, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+                                    gotoAddPetugas();
+                                }
+                            })
+                            .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                    final AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
 
             }
@@ -236,31 +292,6 @@ public class DetailActivity extends AppCompatActivity {
 
             }
         });
-
-        final View title = inflater.inflate(R.layout.text_view_customize,null);
-
-        final ImageView icon = (ImageView) title.findViewById(R.id.custom_icon_of_title);
-        final TextView text = (TextView) title.findViewById(R.id.custom_text_of_title);
-
-        icon.setImageResource(R.drawable.ic_info_black_24dp);
-        text.setText("Change Officer");
-        builder.setCustomTitle(title);
-
-        builder.setView(viewDialog)
-                .setPositiveButton(R.string.dialog_change, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        gotoChangePetugas(userId[0]);
-                    }
-                })
-                .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        final AlertDialog dialog = builder.create();
-        dialog.show();
     }
 
     private void editDevice(final String idDevice) {
@@ -333,7 +364,21 @@ public class DetailActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    private void deleteData(String idDevice) {
+    private void deleteData(final String idDevice) {
+        mDatabaseReference.child("device").child(idDevice).child("user_id").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    String user_id = dataSnapshot.getValue(String.class);
+                    mDatabaseReference.child("list_device").child("petugas").child(user_id).child(idDevice).removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         mDatabaseReference.child("device").child(idDevice).removeValue();
         mDatabaseReference.child("list_device").child("admin").child(currentUser.getUid()).child(idDevice).removeValue();
         mDatabaseReference.child("list_maps").child(idDevice).removeValue();
@@ -346,6 +391,13 @@ public class DetailActivity extends AppCompatActivity {
         gotoChangePetugas.putExtra(DetailActivity.ARGS_DEVICE_ID, mDeviceId);
         gotoChangePetugas.putExtra(DetailActivity.ARGS_DEVICE_NAME, mDeviceName);
         gotoChangePetugas.putExtra("user_id", userID);
+        startActivity(gotoChangePetugas);
+    }
+
+    private void gotoAddPetugas() {
+        Intent gotoChangePetugas = new Intent(this, ListPetugasActivity.class);
+        gotoChangePetugas.putExtra(DetailActivity.ARGS_DEVICE_ID, mDeviceId);
+        gotoChangePetugas.putExtra(DetailActivity.ARGS_DEVICE_NAME, mDeviceName);
         startActivity(gotoChangePetugas);
     }
 }

@@ -53,10 +53,10 @@ public class PetugasListAdapter  extends ArrayAdapter<User> {
         boolean validasi = current.isValidasi();
         Log.i(TAG, "validasi: "+validasi);
         if (validasi) {
-            status.setText("VALID");
+            status.setText("VERIFIED");
             status.setBackgroundColor(0xFF8CC63E);
         } else {
-            status.setText("INVALID");
+            status.setText("UNVERIFIED");
             status.setBackgroundColor(0xFF008DB3);
         }
 

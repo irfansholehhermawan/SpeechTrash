@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.d3iftelu.gooddayteam.speechtrash.adapter.DeviceListAdapter;
 import com.d3iftelu.gooddayteam.speechtrash.model.Device;
+import com.d3iftelu.gooddayteam.speechtrash.model.MarkerData;
 import com.d3iftelu.gooddayteam.speechtrash.model.User;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -123,8 +124,24 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
     private void saveStatusToDatabase(boolean status) {
         if (status){
             myRef.child("admin").child("petugas").child(mUID).child("validasi").setValue(status);
+            myRef.child("list_petugas").child(mUID).child("validasi").setValue(status);
+            myRef.child("list_petugas").child(mUID).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    final User data = dataSnapshot.getValue(User.class);
+                    MarkerData marker = new MarkerData(String.valueOf(data.getPhotoUrl()), data.getLatitude(), data.getLongitude(), data.getName());
+                    myRef.child("list_maps").child(mUID).setValue(marker);
+                    Log.i(TAG, "MarkerData: "+data);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         } else {
             myRef.child("admin").child("petugas").child(mUID).child("validasi").setValue(status);
+            myRef.child("list_petugas").child(mUID).child("validasi").setValue(status);
             myRef.child("list_maps").child(mUID).removeValue();
         }
     }

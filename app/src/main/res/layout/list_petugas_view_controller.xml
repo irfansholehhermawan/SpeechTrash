@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_width="70dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:layout_marginTop="9dp"
@@ -17,19 +17,16 @@
             android:id="@+id/photo_petugas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_person_black_24dp"/>
+            android:src="@drawable/ic_person_24dp"/>
 
         <TextView
             android:id="@+id/status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            android:paddingBottom="2dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="2dp"
+            android:padding="2dp"
             android:gravity="center"
-            tools:text="VALID"
+            tools:text="UNVERIFIED"
             android:textColor="#FFF" />
     </LinearLayout>
 

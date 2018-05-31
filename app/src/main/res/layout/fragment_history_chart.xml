@@ -13,7 +13,7 @@
         android:orientation="vertical">
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="200dp"
             app:cardCornerRadius="9dp">
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/bar_chart_group"
@@ -22,18 +22,18 @@
                 android:layout_margin="8dp"/>
         </android.support.v7.widget.CardView>
 
-        <!--<android.support.v7.widget.CardView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="250dp"-->
-            <!--android:layout_marginTop="16dp"-->
-            <!--app:cardCornerRadius="9dp">-->
-            <!--<com.github.mikephil.charting.charts.BarChart-->
-                <!--android:id="@+id/bar_chart"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_margin="8dp">-->
-            <!--</com.github.mikephil.charting.charts.BarChart>-->
-        <!--</android.support.v7.widget.CardView>-->
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="9dp">
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/bar_chart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp">
+            </com.github.mikephil.charting.charts.BarChart>
+        </android.support.v7.widget.CardView>
     </LinearLayout>
 
 </ScrollView>

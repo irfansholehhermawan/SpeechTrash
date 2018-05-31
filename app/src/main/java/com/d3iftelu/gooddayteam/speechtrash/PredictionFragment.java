@@ -188,76 +188,78 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
         mDatabaseReference.child("device").child(mDeviceId).child("history").child("lastKey").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final String lastKey = dataSnapshot.getValue(String.class);
+                if (dataSnapshot.exists()) {
+                    final String lastKey = dataSnapshot.getValue(String.class);
 
-                mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(lastKey).child("startDate").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            String time = dataSnapshot.getValue(String.class);
-                            long waktu = Long.parseLong(time);
-                            ProcessingHelper processingHelper = new ProcessingHelper();
-                            String date = processingHelper.changeToDate(waktu);
-                            String dateStart = processingHelper.changeToChild(waktu);
-                            mTextViewWaktuStart.setText(date);
+                    mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(lastKey).child("startDate").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                String time = dataSnapshot.getValue(String.class);
+                                long waktu = Long.parseLong(time);
+                                ProcessingHelper processingHelper = new ProcessingHelper();
+                                String date = processingHelper.changeToDate(waktu);
+                                String dateStart = processingHelper.changeToChild(waktu);
+                                mTextViewWaktuStart.setText(date);
 
-                            String[] arrayFinish = date.split(" ");
-                            String finishDate = arrayFinish[0];
-                            int dateFinish = Integer.parseInt(finishDate);
-                            dateFinish = dateFinish + averagePrediction[0];
-                            String finishText = dateFinish + " " + arrayFinish[1] + " " + arrayFinish[2];
-                            mTextViewWaktuFinish.setText(finishText);
+                                String[] arrayFinish = date.split(" ");
+                                String finishDate = arrayFinish[0];
+                                int dateFinish = Integer.parseInt(finishDate);
+                                dateFinish = dateFinish + averagePrediction[0];
+                                String finishText = dateFinish + " " + arrayFinish[1] + " " + arrayFinish[2];
+                                mTextViewWaktuFinish.setText(finishText);
 
-                            if (averagePrediction[0] != 0) {
-                                String[] arrayStart = dateStart.split("-");
-                                String startDate = arrayStart[2];
-                                int tgl = Integer.parseInt(startDate);
-                                int valuePrediction = 100 / averagePrediction[0];
-                                int x = 0;
-                                for (int i = 0; i <= averagePrediction[0]; i++) {
-                                    if (i == 0) {
-                                        x = 0;
-                                    } else {
-                                        x = x + valuePrediction;
-                                    }
-                                    final String childDate = arrayStart[0] + "-" + arrayStart[1] + "-" + tgl;
-                                    Log.i(TAG, "childDate: " + childDate);
-                                    tgl++;
+                                if (averagePrediction[0] != 0) {
+                                    String[] arrayStart = dateStart.split("-");
+                                    String startDate = arrayStart[2];
+                                    int tgl = Integer.parseInt(startDate);
+                                    int valuePrediction = 100 / averagePrediction[0];
+                                    int x = 0;
+                                    for (int i = 0; i <= averagePrediction[0]; i++) {
+                                        if (i == 0) {
+                                            x = 0;
+                                        } else {
+                                            x = x + valuePrediction;
+                                        }
+                                        final String childDate = arrayStart[0] + "-" + arrayStart[1] + "-" + tgl;
+                                        Log.i(TAG, "childDate: " + childDate);
+                                        tgl++;
 
-                                    final int finalVolume = 0;
-                                    final String finalX = String.valueOf(x);
-                                    mDatabaseReference.child("device").child(mDeviceId).child("prediksi").child(lastKey).child(childDate).addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            String cek = dataSnapshot.child("prediksi").getValue(String.class);
-                                            if (cek != null) {
-                                                mDatabaseReference.child("device").child(mDeviceId).child("prediksi").child(lastKey).child(childDate).child("prediksi").setValue(finalX);
-                                            } else {
-                                                mDatabaseReference.child("device").child(mDeviceId).child("prediksi").child(lastKey).child(childDate).child("prediksi").setValue(finalX);
-                                                mDatabaseReference.child("device").child(mDeviceId).child("prediksi").child(lastKey).child(childDate).child("volume").setValue(finalVolume);
+                                        final int finalVolume = 0;
+                                        final String finalX = String.valueOf(x);
+                                        mDatabaseReference.child("device").child(mDeviceId).child("prediksi").child(lastKey).child(childDate).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                String cek = dataSnapshot.child("prediksi").getValue(String.class);
+                                                if (cek != null) {
+                                                    mDatabaseReference.child("device").child(mDeviceId).child("prediksi").child(lastKey).child(childDate).child("prediksi").setValue(finalX);
+                                                } else {
+                                                    mDatabaseReference.child("device").child(mDeviceId).child("prediksi").child(lastKey).child(childDate).child("prediksi").setValue(finalX);
+                                                    mDatabaseReference.child("device").child(mDeviceId).child("prediksi").child(lastKey).child(childDate).child("volume").setValue(finalVolume);
+                                                }
                                             }
-                                        }
 
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
 
-                                        }
-                                    });
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    mTextViewWaktuPrediction.setText("No Data Prediction!");
+                                    mTextViewDay.setVisibility(View.GONE);
                                 }
-                            } else {
-                                mTextViewWaktuPrediction.setText("No Data Prediction!");
-                                mTextViewDay.setVisibility(View.GONE);
                             }
+                            readDataPrediction(lastKey);
                         }
-                        readDataPrediction(lastKey);
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
-                mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(lastKey).child("prediksi").setValue(averagePrediction[0]);
+                        }
+                    });
+                    mDatabaseReference.child("device").child(mDeviceId).child("history").child("full").child(lastKey).child("prediksi").setValue(averagePrediction[0]);
+                }
             }
 
             @Override
@@ -269,6 +271,7 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
 
     private int calculateAverage(ArrayList<History> marks) {
         int average = 0;
+        int div = 0;
         if(marks != null){
             for(int i=0; i <= (marks.size()-1); i++){
                 average += marks.get(i).ConvertToHasil();
@@ -276,7 +279,12 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
         }
 
         assert marks != null;
-        return average / marks.size();
+        if (marks.size() == 0){
+            div = 1;
+        } else {
+            div = marks.size();
+        }
+        return average / div ;
     }
 
     private void readRealtimeData() {

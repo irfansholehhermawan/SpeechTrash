@@ -57,8 +57,10 @@ public class ListPetugasActivity extends AppCompatActivity {
                 Log.i(TAG, "data UID : "+uid);
                 if (userId != null){
                     deleteOfficer(userId);
+                    saveToDatabase(uid, mDeviceId, mDeviceName);
+                } else {
+                    saveToDatabase(uid, mDeviceId, mDeviceName);
                 }
-                saveToDatabase(uid);
                 Toast.makeText(ListPetugasActivity.this, "Petugas : "+ realData.get(i).getName() + " berhasil ditambahkan pada Tempat Sampah ID : " + mDeviceId + "(" + mDeviceName +")", Toast.LENGTH_LONG).show();
                 Intent gotoListDevice = new Intent(ListPetugasActivity.this, AdminActivity.class);
                 startActivity(gotoListDevice);
@@ -71,10 +73,31 @@ public class ListPetugasActivity extends AppCompatActivity {
         mDatabaseReference.child("list_device").child("petugas").child(user_id).child(mDeviceId).removeValue();
     }
 
-    private void saveToDatabase(String uid) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child("list_device").child("petugas").child(uid).child(mDeviceId).setValue(mDeviceName);
-        databaseReference.child("device").child(mDeviceId).child("user_id").setValue(uid);
+    private void saveToDatabase(final String uid, final String mDeviceId, final String mDeviceName) {
+        Log.i(TAG, "saveToDatabase: uid : " +uid+ "\nidDevice : " +mDeviceId+ "\ndeviceName : " +mDeviceName);
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        if (mDeviceName == null) {
+            databaseReference.child("device").child(mDeviceId).child("deviceName").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        String deviceName = dataSnapshot.getValue(String.class);
+                        databaseReference.child("list_device").child("petugas").child(uid).child(mDeviceId).setValue(deviceName);
+                        databaseReference.child("device").child(mDeviceId).child("user_id").setValue(uid);
+                        Log.i(TAG, "saveToDatabase: DEVICENAME : " +deviceName);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            databaseReference.child("list_device").child("petugas").child(uid).child(mDeviceId).setValue(mDeviceName);
+            databaseReference.child("device").child(mDeviceId).child("user_id").setValue(uid);
+        }
     }
 
     public ArrayList<User> getData() {

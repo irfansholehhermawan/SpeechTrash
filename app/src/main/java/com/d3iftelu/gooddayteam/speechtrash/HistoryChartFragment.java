@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.d3iftelu.gooddayteam.speechtrash.chart.MonthAxisValueFormatter;
 import com.d3iftelu.gooddayteam.speechtrash.chart.MyMarkerChartView;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -24,8 +25,6 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,20 +45,22 @@ public class HistoryChartFragment extends Fragment implements OnChartValueSelect
     private static String TAG = "HistoryChartFragment";
     private String mDeviceId;
 
-    private BarChart mChart;
+    private BarChart mChartMounthly;
+    private BarChart mChartAnnualy;
 
     private final String[] MONTH_ARRAY = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-
 
     private float groupSpace = 0.08f;
     private float barSpace = 0.06f;
     private float barWidth = 0.4f;
     private int startMount = 1;
-    private int groupCount = 0;
+    private int groupCountMounthly = 0;
+    private int groupCountAnnualy = 12;
 
 
     private ArrayList<BarEntry> volumeValue = new ArrayList<>();
     private ArrayList<BarEntry> beratValue = new ArrayList<>();
+    private ArrayList<BarEntry> value = new ArrayList<>();
 
     String[] curentDate;
 
@@ -78,62 +79,173 @@ public class HistoryChartFragment extends Fragment implements OnChartValueSelect
         mDeviceId = intent.getStringExtra(DetailActivity.ARGS_DEVICE_ID);
 
         curentDate = getCurentDate();
-        groupCount = Integer.parseInt(curentDate[2]);
+        groupCountMounthly = Integer.parseInt(curentDate[2]);
 
-        mChart = (BarChart) view.findViewById(R.id.bar_chart_group);
-        mChart.setOnChartValueSelectedListener(this);
-        mChart.getDescription().setEnabled(false);
+        mChartMounthly = (BarChart) view.findViewById(R.id.bar_chart_group);
+        mChartMounthly.setOnChartValueSelectedListener(this);
+        mChartMounthly.getDescription().setEnabled(false);
 
         // scaling can now only be done on x- and y-axis separately
-        mChart.setPinchZoom(false);
+        mChartMounthly.setPinchZoom(false);
 
-        mChart.setDrawBarShadow(false);
+        mChartMounthly.setDrawBarShadow(false);
 
-        mChart.setDrawGridBackground(false);
+        mChartMounthly.setDrawGridBackground(false);
 
         // create a custom MarkerView (extend MarkerView) and specify the layout
         // to use for it
-        MyMarkerChartView mv = new MyMarkerChartView(getContext(), R.layout.custom_marker_view);
-        mv.setChartView(mChart); // For bounds control
-        mChart.setMarker(mv); // Set the marker to the chart
+        MyMarkerChartView markerChartMounth = new MyMarkerChartView(getContext(), R.layout.custom_marker_view);
+        markerChartMounth.setChartView(mChartMounthly); // For bounds control
+        mChartMounthly.setMarker(markerChartMounth); // Set the marker to the chart
 
-        Legend l = mChart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setDrawInside(true);
-        l.setYOffset(0f);
-        l.setXOffset(10f);
-        l.setYEntrySpace(0f);
-        l.setTextSize(8f);
+        Legend mounthlyLegend = mChartMounthly.getLegend();
+        mounthlyLegend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        mounthlyLegend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        mounthlyLegend.setOrientation(Legend.LegendOrientation.VERTICAL);
+        mounthlyLegend.setDrawInside(true);
+        mounthlyLegend.setYOffset(0f);
+        mounthlyLegend.setXOffset(10f);
+        mounthlyLegend.setYEntrySpace(0f);
+        mounthlyLegend.setTextSize(8f);
 
-        XAxis xAxis = mChart.getXAxis();
-        xAxis.setGranularity(1f);
-        xAxis.setCenterAxisLabels(true);
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
+        XAxis xAxisMounth = mChartMounthly.getXAxis();
+        xAxisMounth.setGranularity(1f);
+        xAxisMounth.setCenterAxisLabels(true);
+        xAxisMounth.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
                 return String.valueOf((int) value);
             }
         });
 
-        YAxis leftAxis = mChart.getAxisLeft();
-        leftAxis.setAxisMaximum(120f);
-        leftAxis.setAxisMinimum(0f);
+        YAxis leftAxisMounth = mChartMounthly.getAxisLeft();
+        leftAxisMounth.setAxisMaximum(120f);
+        leftAxisMounth.setAxisMinimum(0f);
 
-//        YAxis leftAxis = mChart.getAxisLeft();
+//        YAxis leftAxis = mChartMounthly.getAxisLeft();
 //        leftAxis.setValueFormatter(new LargeValueFormatter());
 //        leftAxis.setDrawGridLines(false);
 //        leftAxis.setSpaceTop(35f);
 //        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
 
-        mChart.getAxisRight().setEnabled(false);
+        mChartMounthly.getAxisRight().setEnabled(false);
+        getBarDataMounth();
+        setViewOfChartMounth();
+
+        mChartAnnualy = (BarChart) view.findViewById(R.id.bar_chart);
+        mChartAnnualy.setOnChartValueSelectedListener(this);
+        mChartAnnualy.getDescription().setEnabled(false);
+        mChartAnnualy.setDrawGridBackground(false);
+        mChartAnnualy.setPinchZoom(false);
+        mChartAnnualy.setDrawBarShadow(false);
+
+        Legend annualyLegend = mChartAnnualy.getLegend();
+        annualyLegend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        annualyLegend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        annualyLegend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        annualyLegend.setDrawInside(false);
+        annualyLegend.setForm(Legend.LegendForm.SQUARE);
+        annualyLegend.setFormSize(9f);
+        annualyLegend.setTextSize(9f);
+        annualyLegend.setXEntrySpace(8f);
+
+        MyMarkerChartView markerChartAnnualy = new MyMarkerChartView(getContext(), R.layout.custom_marker_view);
+        markerChartAnnualy.setChartView(mChartAnnualy); // For bounds control
+        mChartAnnualy.setMarker(markerChartAnnualy); // Set the marker to the chart
+
+        YAxis leftAxisAnnualy = mChartAnnualy.getAxisLeft();
+        leftAxisAnnualy.setValueFormatter(new LargeValueFormatter());
+        leftAxisAnnualy.setDrawGridLines(false);
+        leftAxisAnnualy.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+
+        XAxis xAxisAnnualy = mChartAnnualy.getXAxis();
+        xAxisAnnualy.setGranularity(1f);
+        xAxisAnnualy.setCenterAxisLabels(true);
+        xAxisAnnualy.setValueFormatter(new MonthAxisValueFormatter(mChartAnnualy));
+
+        mChartAnnualy.getAxisRight().setEnabled(false);
+
+        setData();
 
         getBarData();
 
-        setViewOfChart();
-
         return view;
+    }
+
+    private void getBarData(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("device");
+        myRef.keepSynced(true);
+
+        myRef.child(mDeviceId).child("history").child("annualValue").child(getCurentYear()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    long income = 0;
+                    int monthPosition = 0;
+                    for (int i = 1; i < 13; i++) {
+                        value.add(new BarEntry(i, 0));
+                    }
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                        long nilai = userSnapshot.getValue(Long.class);
+                        for (int i = 0; i < MONTH_ARRAY.length; i++) {
+                            if (userSnapshot.getKey().equals(MONTH_ARRAY[i])) {
+                                monthPosition = i + 1;
+                                break;
+                            }
+                        }
+                        value.set(monthPosition - 1, new BarEntry(monthPosition, nilai));
+                        income += nilai;
+                    }
+                    setData();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
+    }
+
+    /**
+     * for set dummy data
+     */
+    private void setData() {
+        BarDataSet income;
+
+        if (mChartAnnualy.getData() != null && mChartAnnualy.getData().getDataSetCount() > 0) {
+            income = (BarDataSet) mChartAnnualy.getData().getDataSetByIndex(0);
+            income.setValues(value);
+            mChartAnnualy.getData().notifyDataChanged();
+            mChartAnnualy.notifyDataSetChanged();
+        } else {
+            income = new BarDataSet(value, "Volume in Year " + getCurentYear());
+            income.setColor(Color.rgb(104, 241, 175));
+
+            BarData data = new BarData(income);
+            data.setValueFormatter(new LargeValueFormatter());
+            mChartAnnualy.setData(data);
+        }
+
+        // specify the width each bar should have
+        mChartAnnualy.getBarData().setBarWidth(barWidth);
+
+        // restrict the x-axis range
+        mChartAnnualy.getXAxis().setAxisMinimum(startMount);
+
+        // barData.getGroupWith(...) is a helper that calculates the width each group needs based on the provided parameters
+        mChartAnnualy.getXAxis().setAxisMaximum(startMount + mChartAnnualy.getBarData().getGroupWidth(groupSpace, barSpace) * groupCountAnnualy);
+//        mChartAnnualy.groupBars(startMount, groupSpace, barSpace);
+        mChartAnnualy.invalidate();
+    }
+
+    private String getCurentYear(){
+        DateFormat yearFormat = new SimpleDateFormat("yyyy");
+        Date date = new Date();
+        return yearFormat.format(date);
     }
 
     @Override
@@ -146,7 +258,7 @@ public class HistoryChartFragment extends Fragment implements OnChartValueSelect
 
     }
 
-    private void getBarData(){
+    private void getBarDataMounth(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("device");
         myRef.keepSynced(true);
@@ -162,7 +274,7 @@ public class HistoryChartFragment extends Fragment implements OnChartValueSelect
                     int position = Integer.parseInt(userSnapshot.getKey());
                     volumeValue.set(position-1, new BarEntry(position-1, nilai));
                 }
-                setViewOfChart();
+                setViewOfChartMounth();
             }
 
             @Override
@@ -184,7 +296,7 @@ public class HistoryChartFragment extends Fragment implements OnChartValueSelect
 
                     Log.d(TAG, "onDataChange: " + (position - beratValue.size()));
                     if(beratValue.size()<position){
-                        groupCount = position;
+                        groupCountMounthly = position;
                         for (int i = beratValue.size(); i < position; i++) {
                             volumeValue.add(new BarEntry(i, 0));
                             beratValue.add(new BarEntry(i, 0));
@@ -193,7 +305,7 @@ public class HistoryChartFragment extends Fragment implements OnChartValueSelect
 
                     beratValue.set(position-1, new BarEntry(position-1, nilai));
                 }
-                setViewOfChart();
+                setViewOfChartMounth();
             }
 
             @Override
@@ -205,17 +317,17 @@ public class HistoryChartFragment extends Fragment implements OnChartValueSelect
         });
     }
 
-    private void setViewOfChart(){
+    private void setViewOfChartMounth(){
         BarDataSet volume, berat;
 
-        if (mChart.getData() != null && mChart.getData().getDataSetCount() > 0) {
+        if (mChartMounthly.getData() != null && mChartMounthly.getData().getDataSetCount() > 0) {
 
-            volume = (BarDataSet) mChart.getData().getDataSetByIndex(0);
-            berat = (BarDataSet) mChart.getData().getDataSetByIndex(1);
+            volume = (BarDataSet) mChartMounthly.getData().getDataSetByIndex(0);
+            berat = (BarDataSet) mChartMounthly.getData().getDataSetByIndex(1);
             volume.setValues(volumeValue);
             berat.setValues(beratValue);
-            mChart.getData().notifyDataChanged();
-            mChart.notifyDataSetChanged();
+            mChartMounthly.getData().notifyDataChanged();
+            mChartMounthly.notifyDataSetChanged();
 
         } else {
             volume = new BarDataSet(volumeValue, "Volume");
@@ -226,19 +338,19 @@ public class HistoryChartFragment extends Fragment implements OnChartValueSelect
             BarData data = new BarData(volume, berat);
             data.setValueFormatter(new LargeValueFormatter());
 
-            mChart.setData(data);
+            mChartMounthly.setData(data);
         }
 
         // specify the width each bar should have
-        mChart.getBarData().setBarWidth(barWidth);
+        mChartMounthly.getBarData().setBarWidth(barWidth);
 
         // restrict the x-axis range
-        mChart.getXAxis().setAxisMinimum(startMount);
+        mChartMounthly.getXAxis().setAxisMinimum(startMount);
 
         // barData.getGroupWith(...) is a helper that calculates the width each group needs based on the provided parameters
-        mChart.getXAxis().setAxisMaximum(startMount + mChart.getBarData().getGroupWidth(groupSpace, barSpace) * groupCount);
-        mChart.groupBars(startMount, groupSpace, barSpace);
-        mChart.invalidate();
+        mChartMounthly.getXAxis().setAxisMaximum(startMount + mChartMounthly.getBarData().getGroupWidth(groupSpace, barSpace) * groupCountMounthly);
+        mChartMounthly.groupBars(startMount, groupSpace, barSpace);
+        mChartMounthly.invalidate();
 
     }
 

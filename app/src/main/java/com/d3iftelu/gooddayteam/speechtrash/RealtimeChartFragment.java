@@ -193,8 +193,10 @@ public class RealtimeChartFragment extends Fragment implements OnChartGestureLis
         mDatabaseReference.child("device").child(mDeviceId).child("history").child("lastKey").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final String lastKey = dataSnapshot.getValue(String.class);
-                readVolume(lastKey);
+                if (dataSnapshot.exists()) {
+                    final String lastKey = dataSnapshot.getValue(String.class);
+                    readVolume(lastKey);
+                }
             }
 
             @Override
