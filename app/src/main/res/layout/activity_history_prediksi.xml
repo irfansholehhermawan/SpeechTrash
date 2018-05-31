@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
+    android:padding="16dp"
     tools:context=".HistoryPrediksiActivity">
 
     <LinearLayout
@@ -15,14 +15,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp">
+            android:paddingBottom="16dp"
+            android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="List Prediction : "
+                android:text="List Prediction"
+                android:gravity="center"
                 android:textSize="16sp"
                 android:textStyle="bold"/>
         </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="#636363"
+            android:layout_marginBottom="8dp" />
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">

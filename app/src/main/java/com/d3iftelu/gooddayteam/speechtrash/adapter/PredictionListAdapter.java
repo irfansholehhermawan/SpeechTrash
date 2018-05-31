@@ -50,9 +50,27 @@ public class PredictionListAdapter extends ArrayAdapter<Prediction> {
         Log.i(TAG, "getView: "+finish);
 
         TextView prediction = view.findViewById(R.id.prediction_day);
-        String prediksi = String.valueOf(current.getPrediksi());
+        TextView marker = view.findViewById(R.id.marker_prediction);
+        int x = current.getPrediksi();
+        String prediksi = String.valueOf(x);
         prediction.setText(prediksi);
         Log.i(TAG, "getView: "+prediksi);
+        if (x == 0){
+            prediction.setBackgroundColor(0xFFD9D8D8);
+            marker.setBackgroundColor(0xFFD9D8D8);
+        } else if (x == 1 || x == 2){
+            prediction.setBackgroundColor(0xFFD10202);
+            marker.setBackgroundColor(0xFFD10202);
+        } else if (x == 3 || x == 4){
+            prediction.setBackgroundColor(0xFF3498DB);
+            marker.setBackgroundColor(0xFF3498DB);
+        } else if (x == 5 || x == 6){
+            prediction.setBackgroundColor(0xFFF1C40F);
+            marker.setBackgroundColor(0xFFF1C40F);
+        } else {
+            prediction.setBackgroundColor(0xFF2ECC71);
+            marker.setBackgroundColor(0xFF2ECC71);
+        }
 
         return view;
     }

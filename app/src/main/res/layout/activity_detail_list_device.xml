@@ -46,14 +46,20 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:padding="8dp">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="List Device : "
+                    android:text="List Device"
+                    android:gravity="center"
                     android:textSize="16sp"
                     android:textStyle="bold"/>
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:background="#636363" />
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
