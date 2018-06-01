@@ -42,7 +42,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 /**
@@ -59,6 +62,8 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
     private TextView mTextViewWaktuPrediction;
     private ImageButton button;
     public ArrayList<History> historyFull = new ArrayList<>();
+    private final String[] MONTH_ARRAY = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+
 
     DatabaseReference mDatabaseReference;
 
@@ -173,6 +178,9 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
                     prediction = String.valueOf(calculateAverage(historyFull));
                     mTextViewWaktuPrediction.setText(prediction);
                     Log.i(TAG, "DataPrediksi " + i + " : " + calculateAverage(historyFull));
+//                    int full = historyFull.size();
+//                    mDatabaseReference.child("device").child(mDeviceId).child("history").child("annualValue").child(getCurentYear()).child(getCurentMonth()).setValue(full);
+//                    Log.i(TAG, "DataFull : " + historyFull.size());
                 } else {
                     Log.i(TAG, "ZONK!");
                 }
@@ -267,6 +275,21 @@ public class PredictionFragment extends Fragment  implements OnChartGestureListe
 
             }
         });
+    }
+
+    private String getCurentYear(){
+        DateFormat yearFormat = new SimpleDateFormat("yyyy");
+        Date date = new Date();
+        return yearFormat.format(date);
+    }
+
+    private String getCurentMonth(){
+        DateFormat dateFormat = new SimpleDateFormat("yyyy MM dd");
+        Date date = new Date();
+        String[] curentDate = dateFormat.format(date).split(" ");
+        curentDate[1] = MONTH_ARRAY[Integer.parseInt(curentDate[1])-1];
+        String month = curentDate[1];
+        return month;
     }
 
     private int calculateAverage(ArrayList<History> marks) {

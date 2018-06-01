@@ -65,8 +65,8 @@ public class PredictionListAdapter extends ArrayAdapter<Prediction> {
             prediction.setBackgroundColor(0xFF3498DB);
             marker.setBackgroundColor(0xFF3498DB);
         } else if (x == 5 || x == 6){
-            prediction.setBackgroundColor(0xFFF1C40F);
-            marker.setBackgroundColor(0xFFF1C40F);
+            prediction.setBackgroundColor(0xFFF7EF00);
+            marker.setBackgroundColor(0xFFF7EF00);
         } else {
             prediction.setBackgroundColor(0xFF2ECC71);
             marker.setBackgroundColor(0xFF2ECC71);

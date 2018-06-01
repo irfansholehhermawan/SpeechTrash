@@ -2,6 +2,7 @@ package com.d3iftelu.gooddayteam.speechtrash.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.d3iftelu.gooddayteam.speechtrash.GPSTracker;
 import com.d3iftelu.gooddayteam.speechtrash.R;
 import com.d3iftelu.gooddayteam.speechtrash.model.User;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -41,6 +43,13 @@ public class PetugasListAdapter  extends ArrayAdapter<User> {
 
         final User current = getItem(position);
 
+        ImageView photo = view.findViewById(R.id.photo_petugas);
+        String mUrlPhoto = current.getPhotoUrl();
+        Uri mUriPhoto = Uri.parse(mUrlPhoto);
+        Picasso.with(getContext())
+                .load(mUriPhoto)
+                .into(photo);
+
         TextView name = view.findViewById(R.id.name_petugas);
         name.setText(current.getName());
 
@@ -54,10 +63,10 @@ public class PetugasListAdapter  extends ArrayAdapter<User> {
         Log.i(TAG, "validasi: "+validasi);
         if (validasi) {
             status.setText("VERIFIED");
-            status.setBackgroundColor(0xFF8CC63E);
+            status.setBackgroundColor(0xFF008DB3);
         } else {
             status.setText("UNVERIFIED");
-            status.setBackgroundColor(0xFF008DB3);
+            status.setBackgroundColor(0xFFFF0000);
         }
 
         return view;

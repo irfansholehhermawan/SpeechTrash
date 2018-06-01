@@ -63,6 +63,7 @@ public class ListPetugasFragment extends Fragment {
                 Intent intent = new Intent(getContext(), DetailListDeviceActivity.class);
                 intent.putExtra(DetailListDeviceActivity.ARGS_UID, realData.get(i).getUser_id());
                 intent.putExtra(DetailListDeviceActivity.ARGS_NAME, realData.get(i).getName());
+                intent.putExtra(DetailListDeviceActivity.ARGS_URL, realData.get(i).getPhotoUrl());
                 startActivity(intent);
                 Log.i(TAG, "latitude : " + realData.get(i).getLatitude());
             }

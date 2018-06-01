@@ -19,10 +19,16 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="16dp">
+            <ImageView
+                android:id="@+id/photo_petugas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_person_24dp"/>
             <TextView
                 android:id="@+id/text_name_officer"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 tools:text="Officer Name" />

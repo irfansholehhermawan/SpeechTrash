@@ -2,6 +2,7 @@ package com.d3iftelu.gooddayteam.speechtrash;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
@@ -34,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -41,14 +44,16 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
     private static final String TAG = "DetailPetugasActivity";
     public static final String ARGS_UID = "petugas_uid";
     public static final String ARGS_NAME = "petugas_name";
+    public static final String ARGS_URL = "petugas_url";
     private DatabaseReference myRef;
     private Switch mSwitchStatus;
+    private ImageView mPhoto;
     private TextView mTextViewOfficerName;
     private ListView mListViewDevice;
     private TextView mTextViewDataIsEmpty;
     private ProgressBar loadingData;
     private DeviceListAdapter mAdapter;
-    private String mUID, mName;
+    private String mUID, mName, mUrl;
     private GoogleMap mMap;
     private LatLng latLng;
 
@@ -60,13 +65,15 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
         Intent intent = getIntent();
         mUID = intent.getStringExtra(DetailListDeviceActivity.ARGS_UID);
         mName = intent.getStringExtra(DetailListDeviceActivity.ARGS_NAME);
-        Log.i(TAG, "CEK: "+ mUID + " : " + mName);
+        mUrl = intent.getStringExtra(DetailListDeviceActivity.ARGS_URL);
+        Log.i(TAG, "CEK: "+ mUID + " : " + mName + " : " + mUrl);
         myRef = FirebaseDatabase.getInstance().getReference();
 
         if (mUID != null) {
             readData(mUID);
         }
         mSwitchStatus = findViewById(R.id.switch_status);
+        mPhoto = (ImageView) findViewById(R.id.photo_petugas);
         mTextViewOfficerName = findViewById(R.id.text_name_officer);
         mListViewDevice = findViewById(R.id.list_view_device);
         mTextViewDataIsEmpty = findViewById(R.id.text_view_empty_view);
@@ -119,6 +126,11 @@ public class DetailListDeviceActivity extends AppCompatActivity implements OnMap
             }
         });
         mTextViewOfficerName.setText(mName);
+        String mUrlPhoto = mUrl;
+        Uri mUriPhoto = Uri.parse(mUrlPhoto);
+        Picasso.with(this)
+                .load(mUriPhoto)
+                .into(mPhoto);
     }
 
     private void saveStatusToDatabase(boolean status) {

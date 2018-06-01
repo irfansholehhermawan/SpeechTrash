@@ -62,8 +62,8 @@ public class ListPetugasActivity extends AppCompatActivity {
                     saveToDatabase(uid, mDeviceId, mDeviceName);
                 }
                 Toast.makeText(ListPetugasActivity.this, "Petugas : "+ realData.get(i).getName() + " berhasil ditambahkan pada Tempat Sampah ID : " + mDeviceId + "(" + mDeviceName +")", Toast.LENGTH_LONG).show();
-                Intent gotoListDevice = new Intent(ListPetugasActivity.this, AdminActivity.class);
-                startActivity(gotoListDevice);
+                Intent gotoListDeviceAdmin = new Intent(ListPetugasActivity.this, AdminActivity.class);
+                startActivity(gotoListDeviceAdmin);
             }
         });
     }

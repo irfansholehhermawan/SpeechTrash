@@ -235,6 +235,24 @@ public class DetailActivity extends AppCompatActivity {
                                                 gotoChangePetugas(userId[0]);
                                             }
                                         })
+                                        .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
+                                                builder.setMessage(R.string.delete_data_question)
+                                                        .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int id) {
+                                                                deleteOfficer(userId[0]);
+                                                            }
+                                                        })
+                                                        .setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int id) {
+                                                                dialog.cancel();
+                                                            }
+                                                        });
+                                                builder.create().show();
+                                            }
+                                        })
                                         .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
                                                 dialog.cancel();
@@ -354,6 +372,7 @@ public class DetailActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         deleteData(idDevice);
+                        finish();
                     }
                 })
                 .setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
@@ -399,5 +418,14 @@ public class DetailActivity extends AppCompatActivity {
         gotoChangePetugas.putExtra(DetailActivity.ARGS_DEVICE_ID, mDeviceId);
         gotoChangePetugas.putExtra(DetailActivity.ARGS_DEVICE_NAME, mDeviceName);
         startActivity(gotoChangePetugas);
+    }
+
+    private void deleteOfficer(String user_id) {
+        mDatabaseReference.child("list_device").child("petugas").child(user_id).child(mDeviceId).removeValue();
+        mDatabaseReference.child("device").child(mDeviceId).child("user_id").removeValue();
+        Toast.makeText(this, "Data Officer Successfully Deleted!", Toast.LENGTH_SHORT).show();
+        Intent gotoListDeviceAdmin = new Intent(DetailActivity.this, AdminActivity.class);
+        startActivity(gotoListDeviceAdmin);
+//        finish();
     }
 }
